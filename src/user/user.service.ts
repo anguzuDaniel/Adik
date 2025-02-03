@@ -22,12 +22,12 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns a user`;
+  async findAll() {
+    return this.usersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return this.usersRepository.findOneBy({ id });
   }
 
   async findOneByUserName(username: string): Promise<User | null> {
@@ -42,11 +42,11 @@ export class UserService {
     });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} ${updateUserInput.username} user`;
+  async update(id: number, updateUserInput: UpdateUserInput) {
+    return this.usersRepository.update(id, updateUserInput);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    return this.usersRepository.delete({ id });
   }
 }
