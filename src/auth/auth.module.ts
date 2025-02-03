@@ -21,5 +21,6 @@ import { UserModule } from '../user/user.module';
     }),
   ],
   providers: [AuthService, AuthResolver, SupabaseStrategy, UserService],
+  exports: [AuthService, SupabaseStrategy],
 })
 export class AuthModule {}

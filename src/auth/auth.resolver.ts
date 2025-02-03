@@ -13,7 +13,10 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => User)
-  signUp(@Args('input') input: CreateUserInput) {
+  signUp(
+    @Args({ name: 'input', type: () => CreateUserInput })
+    input: CreateUserInput,
+  ) {
     return this.authService.registerUser(input);
   }
 

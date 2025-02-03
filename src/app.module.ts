@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './user/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfig from '../config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,7 +17,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: dbConfig,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('SUPABASE_DATABASE_URL'),
+        password: configService.get<string>('SUPABASE_DATABASE_PASSWORD'),
+        username: configService.get<string>('SUPABASE_DATABASE_USERNAME'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        autoLoadEntities: true,
+        synchronize: true, // Warning: Set to false in production
+      }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
