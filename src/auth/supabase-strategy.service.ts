@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt } from 'passport-jwt';
 import e from 'express';
@@ -22,7 +22,11 @@ export class SupabaseStrategy extends PassportStrategy(
   }
 
   validate(payload: any): any {
-    return super.validate(payload);
+    console.log('Decoded payload:', payload);
+    if (!payload) {
+      throw new UnauthorizedException();
+    }
+    return payload;
   }
 
   authenticate(

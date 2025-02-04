@@ -2,9 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserInput } from '../user/dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { verify } from 'jsonwebtoken';
 import { Role } from '../enums/Role';
-import { JwtUser } from './types/jwt-user';
 import { AuthJwtPayload } from './types/auth-jwt-payload';
 import { AuthPayload } from './entities/auth-payload';
 import { User } from '../entities/user.entity';
@@ -33,7 +31,7 @@ export class AuthService {
   async validateLocalUser({ email, password }: SignInInput) {
     const user = await this.userRepo.findOneByOrFail({ email });
 
-    const passwordMatched = verify(user.password, password);
+    const passwordMatched = await bcrypt.compare(password, user.password);
 
     if (!passwordMatched) {
       throw new UnauthorizedException('Invalid Credentials');
@@ -49,7 +47,10 @@ export class AuthService {
       },
     };
 
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '1h',
+    });
+
     return { accessToken };
   }
 
@@ -64,12 +65,12 @@ export class AuthService {
     };
   }
 
-  async validateJwtUser(userId: number) {
-    const user = await this.userRepo.findOneByOrFail({ id: userId });
-    const jwtUser: JwtUser = {
-      userId: user.id,
-      role: user.role,
-    };
-    return jwtUser;
-  }
+  // async validateJwtUser(token: number) {
+  //   try {
+  //     const decoded = this.jwtService.verify(token); // Use verify to decode and validate the token
+  //     return decoded;
+  //   } catch (e) {
+  //     throw new UnauthorizedException('Invalid or expired token');
+  //   }
+  // }
 }

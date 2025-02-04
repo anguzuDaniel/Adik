@@ -6,21 +6,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'node:process';
-import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: process.env.JWT_SECRET as string,
       signOptions: {
-        expiresIn: process.env.JWT_EXPIRATION as unknown as number,
+        expiresIn: parseInt(process.env.JWT_EXPIRATION as string, 3600),
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, SupabaseStrategy, UserService],
+  providers: [AuthService, AuthResolver, SupabaseStrategy],
   exports: [AuthService, SupabaseStrategy],
 })
 export class AuthModule {}

@@ -43,7 +43,16 @@ export class UserService {
   }
 
   async update(id: number, updateUserInput: UpdateUserInput) {
-    return this.usersRepository.update(id, updateUserInput);
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return await this.usersRepository.save({
+      ...user,
+      ...updateUserInput,
+    });
   }
 
   async remove(id: number) {
