@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfig from '../config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     UserModule,
     AuthModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
