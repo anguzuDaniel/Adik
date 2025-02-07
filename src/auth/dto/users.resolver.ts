@@ -1,23 +1,23 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { GqlAuthGuard } from './gql-auth.guard';
-import { UserService } from '../../user/user.service';
-import { CreateUserInput } from '../../user/dto/create-user.input';
+import { UsersService } from '../../users/users.service';
+import { CreateUsersInput } from '../../users/dto/create-users.input';
 
-@Resolver(() => CreateUserInput)
+@Resolver(() => CreateUsersInput)
 export class UsersResolver {
-  constructor(private readonly usersService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => [CreateUserInput])
+  @Query(() => [CreateUsersInput])
   users() {
     return this.usersService.findAll();
   }
 
-  @Mutation(() => CreateUserInput)
+  @Mutation(() => CreateUsersInput)
   async createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<CreateUserInput> {
+    @Args('createUserInput') createUserInput: CreateUsersInput,
+  ): Promise<CreateUsersInput> {
     return this.usersService.create(createUserInput);
   }
 }

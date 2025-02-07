@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -9,18 +9,23 @@ import {
 @ObjectType()
 @Entity()
 export class Message {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
-  sender_id: number;
+  @Field()
+  @Column()
+  senderId: string;
 
-  @Column({ type: 'int' })
-  receiver_id: number;
+  @Field()
+  @Column()
+  receiverId: string;
 
+  @Field()
   @Column()
   content: string;
 
+  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   timestamp: Date;
 }

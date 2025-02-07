@@ -4,7 +4,7 @@ import { Role } from '../../enums/Role';
 import { ApiProperty } from '@nestjs/swagger';
 
 @InputType()
-export class CreateUserInput {
+export class CreateUsersInput {
   @ApiProperty()
   @IsString()
   @Field()

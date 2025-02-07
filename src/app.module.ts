@@ -4,11 +4,11 @@ import { AuthModule } from './auth/auth.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfig from '../config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessageModule } from './message/message.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -36,9 +36,9 @@ import { MessageModule } from './message/message.module';
       debug: true,
       playground: true,
     }),
-    UserModule,
+    UsersModule,
     AuthModule,
-    MessageModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

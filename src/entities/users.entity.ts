@@ -1,12 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, MinLength } from 'class-validator';
 
 @ObjectType()
 @Entity()
-export class User {
-  constructor(partial?: Partial<User>) {
+@Unique(['username', 'email']) // Unique constraint
+export class Users {
+  constructor(partial?: Partial<Users>) {
     Object.assign(this, partial);
   }
 
@@ -19,7 +20,7 @@ export class User {
   username: string;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Field()

@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserInput } from './dto/update-user.input';
+import { UpdateUsersInput } from './dto/update-users.input';
 import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
+import { Users } from '../entities/users.entity';
+import { CreateUsersInput } from './dto/create-users.input';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(Users)
+    private usersRepository: Repository<Users>,
   ) {}
 
-  async create(createUserInput: CreateUserInput): Promise<User> {
+  async create(createUserInput: CreateUsersInput): Promise<Users> {
+    const existingUser = await this.usersRepository.findOneBy({ email: createUserInput.email });
+
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
+
     const hashPassword = await bcrypt.hash(createUserInput.password, 10);
     const user = this.usersRepository.create({
       ...createUserInput,
@@ -30,19 +36,19 @@ export class UserService {
     return this.usersRepository.findOneBy({ id });
   }
 
-  async findOneByUserName(username: string): Promise<User | null> {
+  async findOneByUserName(username: string): Promise<Users | null> {
     return this.usersRepository.findOne({
       where: { username },
     });
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
+  async findOneByEmail(email: string): Promise<Users | null> {
     return this.usersRepository.findOne({
       where: { email },
     });
   }
 
-  async update(id: number, updateUserInput: UpdateUserInput) {
+  async update(id: number, updateUserInput: UpdateUsersInput) {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {

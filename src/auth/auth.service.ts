@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserInput } from '../user/dto/create-user.input';
+import { CreateUsersInput } from '../users/dto/create-users.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Role } from '../enums/Role';
 import { AuthJwtPayload } from './types/auth-jwt-payload';
 import { AuthPayload } from './entities/auth-payload';
-import { User } from '../entities/user.entity';
+import { Users } from '../entities/users.entity';
 import { SignInInput } from './dto/signInInput';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -13,23 +13,38 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepo: Repository<User>,
+    @InjectRepository(Users)
+    private userRepo: Repository<Users>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async registerUser(input: CreateUserInput) {
-    const hashedPassword = await bcrypt.hash(input.password, 10);
-    const newUser = this.userRepo.create({
-      ...input,
-      password: hashedPassword,
-      role: Role.USER,
-    });
-    return await this.userRepo.save(newUser);
+  async registerUser(input: CreateUsersInput) {
+    try {
+      const hashedPassword = await bcrypt.hash(input.password, 10);
+
+      const newUser = this.userRepo.create({
+        ...input,
+        password: hashedPassword,
+        role: Role.USER,
+      });
+
+      const savedUser = await this.userRepo.save(newUser);
+
+      return this.login(savedUser);
+    } catch (e) {
+      if (e instanceof QueryFailedError && e.driverError === '23505') {
+        throw new UnauthorizedException('User with this email already exists');
+      }
+      throw e;
+    }
   }
 
   async validateLocalUser({ email, password }: SignInInput) {
     const user = await this.userRepo.findOneByOrFail({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid Credentials');
+    }
 
     const passwordMatched = await bcrypt.compare(password, user.password);
 
@@ -42,9 +57,7 @@ export class AuthService {
 
   generateToken(userId: number) {
     const payload: AuthJwtPayload = {
-      sub: {
-        userId,
-      },
+      sub: userId,
     };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -54,7 +67,7 @@ export class AuthService {
     return { accessToken };
   }
 
-  login(user: User): AuthPayload {
+  login(user: Users): AuthPayload {
     const { accessToken } = this.generateToken(user.id);
 
     return {
