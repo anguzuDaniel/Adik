@@ -1,58 +1,78 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUsersInput } from '../users/dto/create-users.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
 import { Role } from '../enums/Role';
 import { AuthJwtPayload } from './types/auth-jwt-payload';
-import { AuthPayload } from './entities/auth-payload';
-import { Users } from '../entities/users.entity';
 import { SignInInput } from './dto/signInInput';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Repository } from 'typeorm';
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { AuthPayload } from './entities/auth-payload';
+import { Users } from 'src/entities/users.entity';
 
 @Injectable()
 export class AuthService {
+  private supabase: SupabaseClient;
+
   constructor(
     @InjectRepository(Users)
     private userRepo: Repository<Users>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.supabase = createClient(
+      process.env.SUPABASE_URL as string,
+      process.env.SUPABASE_KEY as string,
+    );
+  }
 
-  async registerUser(input: CreateUsersInput) {
-    try {
-      const hashedPassword = await bcrypt.hash(input.password, 10);
+  async registerUser({ email, password }: CreateUsersInput) {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+    });
 
-      const newUser = this.userRepo.create({
-        ...input,
-        password: hashedPassword,
-        role: Role.USER,
-      });
-
-      const savedUser = await this.userRepo.save(newUser);
-
-      return this.login(savedUser);
-    } catch (e) {
-      if (e instanceof QueryFailedError && e.driverError === '23505') {
-        throw new UnauthorizedException('User with this email already exists');
-      }
-      throw e;
+    if (error) {
+      throw new ConflictException('User with this email may already exist');
     }
+
+    await this.supabase.from('users').insert({
+      email,
+      role: Role.USER,
+    });
+
+    const fullUser = await this.userRepo.findOne({ where: { email } });
+
+    if (!fullUser) {
+      throw new Error('User not found creation');
+    }
+
+    const supabaseUser: User = {
+      id: fullUser.id.toString(),
+      email: fullUser.email,
+      app_metadata: {}, // Empty object or default data
+      user_metadata: {}, // Empty object or default data
+      aud: 'authenticated', // Assuming 'authenticated' is the default audience
+      created_at: new Date().toISOString(), // Add a default creation date
+    };
+
+    return this.login(supabaseUser);
   }
 
   async validateLocalUser({ email, password }: SignInInput) {
-    const user = await this.userRepo.findOneByOrFail({ email });
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (!user) {
+    if (error) {
       throw new UnauthorizedException('Invalid Credentials');
     }
 
-    const passwordMatched = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatched) {
-      throw new UnauthorizedException('Invalid Credentials');
-    }
-
-    return user;
+    return data.user;
   }
 
   generateToken(userId: number) {
@@ -67,14 +87,15 @@ export class AuthService {
     return { accessToken };
   }
 
-  login(user: Users): AuthPayload {
-    const { accessToken } = this.generateToken(user.id);
+  login(user: User): AuthPayload {
+    const payload = { sub: user.id, email: user.email };
+    const accessToken = this.jwtService.sign(payload);
 
     return {
       userId: user.id,
-      role: user.role,
+      role: Role.USER,
       accessToken,
-      message: 'Login successful',
+      message: 'Logged in Successfully.',
     };
   }
 

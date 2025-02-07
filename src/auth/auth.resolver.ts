@@ -1,9 +1,13 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { SignInInput } from './dto/signInInput';
 import { CreateUsersInput } from '../users/dto/create-users.input';
 import { AuthPayload } from './entities/auth-payload';
 import { Users } from '../entities/users.entity';
+import { GqlAuthGuard } from './dto/gql-auth.guard';
+import { SupabaseAuthUser } from 'nestjs-supabase-auth';
+import { UseGuards } from '@nestjs/common';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 /**
  * Write comments
@@ -11,6 +15,12 @@ import { Users } from '../entities/users.entity';
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
+
+  @Query(() => Users, { name: 'viewer' })
+  @UseGuards(GqlAuthGuard)
+  me(@CurrentUser() user: SupabaseAuthUser) {
+    return user;
+  }
 
   @Mutation(() => Users)
   signUp(
@@ -21,7 +31,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthPayload)
-  async signIn(@Args('input') input: SignInInput) {
+  async signIn(@Args('input') input: SignInInput): Promise<AuthPayload> {
     const user = await this.authService.validateLocalUser(input);
     return this.authService.login(user);
   }

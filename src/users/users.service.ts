@@ -14,7 +14,9 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: CreateUsersInput): Promise<Users> {
-    const existingUser = await this.usersRepository.findOneBy({ email: createUserInput.email });
+    const existingUser = await this.usersRepository.findOneBy({
+      email: createUserInput.email,
+    });
 
     if (existingUser) {
       throw new Error('User with this email already exists');

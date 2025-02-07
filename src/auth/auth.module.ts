@@ -8,11 +8,13 @@ import { JwtModule } from '@nestjs/jwt';
 import * as process from 'node:process';
 import { UsersModule } from '../users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
+    PassportModule,
     TypeOrmModule.forFeature([Users]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'secret',

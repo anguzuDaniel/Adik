@@ -4,7 +4,7 @@ import { Role } from '../../enums/Role';
 @ObjectType()
 export class AuthPayload {
   @Field(() => Int)
-  userId: number;
+  userId: string;
 
   @Field(() => Role)
   role: Role;
