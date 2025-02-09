@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUsersInput } from '../users/dto/create-users.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from '../enums/Role';
 import { AuthJwtPayload } from './types/auth-jwt-payload';
@@ -13,6 +12,8 @@ import { Repository } from 'typeorm';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { AuthPayload } from './entities/auth-payload';
 import { Users } from 'src/entities/users.entity';
+import * as process from 'node:process';
+import { CreateUsersInput } from '../users/dto/create-users.input';
 
 @Injectable()
 export class AuthService {
@@ -29,25 +30,40 @@ export class AuthService {
     );
   }
 
-  async registerUser({ email, password }: CreateUsersInput) {
-    const { data, error } = await this.supabase.auth.signUp({
+  async registerUser({ username, email, role, password }: CreateUsersInput) {
+    const { error } = await this.supabase.auth.signUp({
+      phone: '',
       email,
       password,
+      options: {
+        emailRedirectTo: undefined,
+        data: { email_confirm: true },
+      },
     });
 
     if (error) {
       throw new ConflictException('User with this email may already exist');
     }
 
-    await this.supabase.from('users').insert({
+    const { error: insertError } = await this.supabase.from('users').insert({
+      username,
       email,
-      role: Role.USER,
+      password,
+      role: role,
     });
 
-    const fullUser = await this.userRepo.findOne({ where: { email } });
+    if (insertError) {
+      throw new Error(
+        `Failed to insert user into users table: ${insertError.message}`,
+      );
+    }
+
+    const fullUser = await this.userRepo.findOneBy({
+      email: email.toLocaleLowerCase(),
+    });
 
     if (!fullUser) {
-      throw new Error('User not found creation');
+      throw new Error('User not found after creation');
     }
 
     const supabaseUser: User = {
@@ -59,7 +75,9 @@ export class AuthService {
       created_at: new Date().toISOString(), // Add a default creation date
     };
 
-    return this.login(supabaseUser);
+    const authPayload = this.login(supabaseUser);
+    console.log('AuthPayload being returned:', authPayload);
+    return authPayload;
   }
 
   async validateLocalUser({ email, password }: SignInInput) {
@@ -68,9 +86,13 @@ export class AuthService {
       password,
     });
 
-    if (error) {
+    // console.log('Supabase Auth Response:', { data, error }); // Debugging
+
+    if (error || !data || !data.user) {
       throw new UnauthorizedException('Invalid Credentials');
     }
+
+    console.log('Authenticated User:', data.user); // Debugging
 
     return data.user;
   }
@@ -81,18 +103,23 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1h',
+      expiresIn: process.env.JWT_EXPIRATION_TIME || '1h',
     });
 
     return { accessToken };
   }
 
   login(user: User): AuthPayload {
+    if (!user.email) {
+      throw new Error('User email is missing in login function');
+    }
+
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
     return {
-      userId: user.id,
+      userId: user.id.toString(),
+      email: user.email,
       role: Role.USER,
       accessToken,
       message: 'Logged in Successfully.',
