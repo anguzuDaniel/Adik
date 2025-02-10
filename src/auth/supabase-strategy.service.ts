@@ -15,7 +15,7 @@ export class SupabaseStrategy extends PassportStrategy(
   public constructor() {
     super({
       supabaseUrl: process.env.SUPABASE_DATABASE_URL as string,
-      supabaseKey: process.env.SUPABASE_KEY as string,
+      supabaseKey: process.env.SUPABASE_JWT_SECRET as string,
       supabaseOptions: {},
       extractor: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
@@ -23,9 +23,11 @@ export class SupabaseStrategy extends PassportStrategy(
 
   validate(payload: any): any {
     console.log('Decoded payload:', payload);
+
     if (!payload) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid token or missing userId');
     }
+
     return payload;
   }
 

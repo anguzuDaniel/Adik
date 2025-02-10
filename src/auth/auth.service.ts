@@ -86,9 +86,8 @@ export class AuthService {
       password,
     });
 
-    // console.log('Supabase Auth Response:', { data, error }); // Debugging
-
     if (error || !data || !data.user) {
+      console.error('Authentication failed due to error:', error);
       throw new UnauthorizedException('Invalid Credentials');
     }
 
@@ -114,8 +113,12 @@ export class AuthService {
       throw new Error('User email is missing in login function');
     }
 
-    const payload = { sub: user.id, email: user.email };
-    const accessToken = this.jwtService.sign(payload);
+    const payload = { sub: user.id, email: user.email, role: Role.USER };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '1h',
+    });
 
     return {
       userId: user.id.toString(),

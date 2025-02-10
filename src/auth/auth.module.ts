@@ -9,6 +9,7 @@ import * as process from 'node:process';
 import { UsersModule } from '../users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { GqlAuthGuard } from './dto/gql-auth.guard';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { PassportModule } from '@nestjs/passport';
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, SupabaseStrategy],
-  exports: [AuthService, SupabaseStrategy],
+  providers: [AuthService, AuthResolver, SupabaseStrategy, GqlAuthGuard],
+  exports: [AuthService, SupabaseStrategy, GqlAuthGuard],
 })
 export class AuthModule {}

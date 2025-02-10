@@ -35,6 +35,7 @@ import { MessagesModule } from './messages/messages.module';
       autoSchemaFile: true,
       debug: true,
       playground: true,
+      context: ({ req }) => ({ req }),
     }),
     UsersModule,
     AuthModule,

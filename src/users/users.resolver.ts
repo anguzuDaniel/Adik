@@ -11,30 +11,30 @@ import { ApiOperation } from '@nestjs/swagger';
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
 
-  // @UseGuards(GqlAuthGuard)
   @Mutation(() => Users)
   @ApiOperation({ summary: 'Create a users.' })
+  @UseGuards(GqlAuthGuard)
   createUser(@Args('createUserInput') createUserInput: CreateUsersInput) {
     return this.userService.create(createUserInput);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => [Users], { name: 'user' })
   @ApiOperation({ summary: 'Find all users' })
+  @UseGuards(GqlAuthGuard)
   findAll() {
     return this.userService.findAll();
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => Users, { name: 'user' })
   @ApiOperation({ summary: 'Find one users' })
+  @UseGuards(GqlAuthGuard)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.userService.findOne(id);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => Users)
   @ApiOperation({ summary: 'Update users' })
+  @UseGuards(GqlAuthGuard)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUsersInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }

@@ -23,15 +23,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthPayload)
-  signUp(@Args({ name: 'input' }) input: CreateUsersInput): Promise<AuthPayload> {
+  signUp(
+    @Args({ name: 'input' }) input: CreateUsersInput,
+  ): Promise<AuthPayload> {
     return this.authService.registerUser(input);
   }
 
   @Mutation(() => AuthPayload)
   async signIn(@Args('input') input: SignInInput): Promise<AuthPayload> {
     const user = await this.authService.validateLocalUser(input);
-
-    console.log('User returned from validateLocalUser:', user);
 
     if (!user || !user.email) {
       throw new UnauthorizedException('Invalid login credentials');
