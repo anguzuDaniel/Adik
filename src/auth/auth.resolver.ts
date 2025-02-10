@@ -37,6 +37,6 @@ export class AuthResolver {
       throw new UnauthorizedException('Invalid login credentials');
     }
 
-    return this.authService.login(user);
+    return this.authService.loginUserWithSupabase(input.email, input.password);
   }
 }

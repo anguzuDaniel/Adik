@@ -8,13 +8,14 @@ import { CreateUsersInput } from '../../users/dto/create-users.input';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => [CreateUsersInput])
+  @UseGuards(GqlAuthGuard)
   users() {
     return this.usersService.findAll();
   }
 
   @Mutation(() => CreateUsersInput)
+  @UseGuards(GqlAuthGuard)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUsersInput,
   ): Promise<CreateUsersInput> {

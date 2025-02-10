@@ -17,7 +17,7 @@ import { CreateUsersInput } from '../users/dto/create-users.input';
 
 @Injectable()
 export class AuthService {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(
     @InjectRepository(Users)
@@ -28,6 +28,7 @@ export class AuthService {
       process.env.SUPABASE_URL as string,
       process.env.SUPABASE_KEY as string,
     );
+    console.log('Supabase client initialized:', this.supabase); // Debugging log
   }
 
   async registerUser({ username, email, role, password }: CreateUsersInput) {
@@ -129,12 +130,46 @@ export class AuthService {
     };
   }
 
-  // async validateJwtUser(token: number) {
-  //   try {
-  //     const decoded = this.jwtService.verify(token); // Use verify to decode and validate the token
-  //     return decoded;
-  //   } catch (e) {
-  //     throw new UnauthorizedException('Invalid or expired token');
-  //   }
-  // }
+  async loginUserWithSupabase(
+    email: string,
+    password: string,
+  ): Promise<AuthPayload> {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.log('Error logging in with Supabase:', error);
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    console.log('Logged in', data);
+
+    const { data: session, error: sessionError } =
+      await this.supabase.auth.getSession();
+
+    if (sessionError || !session.session) {
+      console.error('Error fetching session:', sessionError);
+      throw new UnauthorizedException('Session retrieval failed');
+    }
+
+    const supabaseAccessToken = session.session?.access_token;
+    const supabaseUser = session.session?.user;
+
+    return {
+      userId: supabaseUser.id.toString(),
+      email: email,
+      role: Role.USER,
+      accessToken: supabaseAccessToken,
+      message: 'Logged in Successfully.',
+    };
+  }
+
+  getClient(): SupabaseClient {
+    if (!this.supabase) {
+      console.error('Supabase client is not initialized.');
+    }
+    return this.supabase;
+  }
 }
