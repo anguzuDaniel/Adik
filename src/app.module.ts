@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesModule } from './messages/messages.module';
 import { JournalsModule } from './journals/journals.module';
 import { ReportsModule } from './reports/reports.module';
+import { MatchesModule } from './matches/matches.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ReportsModule } from './reports/reports.module';
     MessagesModule,
     JournalsModule,
     ReportsModule,
+    MatchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

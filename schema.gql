@@ -60,6 +60,11 @@ type Report {
   status: String!
 }
 
+type Match {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   user(id: Int!): Users!
   viewer: Users!
@@ -67,6 +72,8 @@ type Query {
   journal(id: Int!): Journal!
   reports: [Report!]!
   report(id: Int!): Report!
+  matches: [Match!]!
+  match(id: Int!): Match!
 }
 
 type Mutation {
@@ -84,6 +91,9 @@ type Mutation {
   createReport(createReportInput: CreateReportInput!): Report!
   updateReport(updateReportInput: UpdateReportInput!): Report!
   removeReport(id: Int!): Report!
+  createMatch(createMatchInput: CreateMatchInput!): Match!
+  updateMatch(updateMatchInput: UpdateMatchInput!): Match!
+  removeMatch(id: Int!): Match!
 }
 
 input CreateUsersInput {
@@ -146,4 +156,15 @@ input UpdateReportInput {
   reporterId: String!
   reason: String!
   status: ReportStatus!
+}
+
+input CreateMatchInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMatchInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
