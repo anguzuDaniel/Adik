@@ -61,8 +61,10 @@ type Report {
 }
 
 type Match {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  userId: String!
+  matchedUserId: String!
+  static: String!
 }
 
 type Query {
