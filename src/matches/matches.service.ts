@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMatchInput } from './dto/create-match.input';
 import { UpdateMatchInput } from './dto/update-match.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Match } from './entities/match.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MatchesService {
+  constructor(
+    @InjectRepository(Match) private matchRepository: Repository<Match>,
+  ) {}
+
   create(createMatchInput: CreateMatchInput) {
-    return 'This action adds a new match';
+    return this.matchRepository.create(createMatchInput);
   }
 
   findAll() {
-    return `This action returns all matches`;
+    return this.matchRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} match`;
+  async findOne(id: number) {
+    if (!id) {
+      throw new NotFoundException('Please provide and Id');
+    }
+
+    return await this.matchRepository.findOne({ where: { id } });
   }
 
   update(id: number, updateMatchInput: UpdateMatchInput) {
-    return `This action updates a #${id} match`;
+    return this.matchRepository.update(id, updateMatchInput);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} match`;
+  async remove(id: number) {
+    if (!id) {
+      throw new NotFoundException('Please provide and Id');
+    }
+
+    const match = await this.matchRepository.findOne({ where: { id } });
+
+    if (!match) {
+      throw new NotFoundException('Match not found');
+    }
+
+    return await this.matchRepository.remove(match);
   }
 }

@@ -29,7 +29,7 @@ export class JournalsService {
   }
 
   async remove(id: number) {
-    const journal = await this.findOne(id);
+    const journal = await this.journalRepository.findOne({ where: { id } });
 
     if (!journal) {
       throw new Error('Journal not found');

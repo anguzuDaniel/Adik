@@ -161,12 +161,15 @@ input UpdateReportInput {
 }
 
 input CreateMatchInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  userId: String!
+  matchedUserId: String!
+  static: String!
 }
 
 input UpdateMatchInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
+  userId: String
+  matchedUserId: String
+  static: String
 }
