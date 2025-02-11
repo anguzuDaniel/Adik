@@ -1,13 +1,16 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { MessagesService } from './messages.service';
 import { CreateMessagesInput } from './dto/create-messages.input';
-import { Message } from 'src/entities/messages.entity';
+import { Messages } from 'src/entities/messages.entity';
+import { GqlAuthGuard } from '../auth/dto/gql-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
-@Resolver(() => Message)
+@Resolver(() => Messages)
 export class MessagesResolver {
   constructor(private readonly messageService: MessagesService) {}
 
-  @Mutation(() => Message)
+  @Mutation(() => Messages)
+  @UseGuards(GqlAuthGuard)
   createMessage(
     @Args('createMessageInput') createMessageInput: CreateMessagesInput,
   ) {
@@ -15,6 +18,7 @@ export class MessagesResolver {
       createMessageInput.senderId,
       createMessageInput.receiverId,
       createMessageInput.content,
+      createMessageInput.parentId,
     );
   }
 }

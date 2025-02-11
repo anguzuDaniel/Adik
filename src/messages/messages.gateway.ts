@@ -14,7 +14,7 @@ export class MessagesGateway {
   @SubscribeMessage('message')
   async handleMessage(
     @MessageBody()
-    data: { senderId: string; receiverId: string; content: string },
+    data: { senderId: number; receiverId: number; content: string },
     @ConnectedSocket() client: Socket,
   ) {
     const message = await this.messagesService.sendMessage(

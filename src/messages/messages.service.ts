@@ -1,29 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Message } from '../entities/messages.entity';
+import { Messages } from '../entities/messages.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class MessagesService {
   constructor(
-    @InjectRepository(Message)
-    private messageRepository: Repository<Message>,
+    @InjectRepository(Messages)
+    private messageRepository: Repository<Messages>,
   ) {}
 
   async sendMessage(
-    senderId: string,
-    receiverId: string,
+    senderId: number,
+    receiverId: number,
     content: string,
-  ): Promise<Message> {
+    parentId?: number,
+  ): Promise<Messages> {
     const message = this.messageRepository.create({
       senderId,
       receiverId,
       content,
+      parentId,
     });
     return await this.messageRepository.save(message);
   }
 
-  async getMessageBetweenUsers(fromId: string, toId: string) {
+  async getMessageBetweenUsers(fromId: number, toId: number) {
     return await this.messageRepository.find({
       where: [
         { senderId: fromId, receiverId: toId },

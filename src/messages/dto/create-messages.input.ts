@@ -1,6 +1,7 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+import { Column } from 'typeorm';
 
 @InputType()
 export class CreateMessagesInput {
@@ -15,11 +16,16 @@ export class CreateMessagesInput {
 
   @ApiProperty()
   @IsString()
-  @Field()
-  senderId: string;
+  @Field(() => Int)
+  senderId: number;
+
+  // Replying to message
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  parentId?: number;
 
   @ApiProperty()
   @IsString()
   @Field(() => Int)
-  receiverId: string;
+  receiverId: number;
 }
