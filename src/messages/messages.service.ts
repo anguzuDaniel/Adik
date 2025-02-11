@@ -11,8 +11,8 @@ export class MessagesService {
   ) {}
 
   async sendMessage(
-    senderId: number,
-    receiverId: number,
+    senderId: string,
+    receiverId: string,
     content: string,
     parentId?: number,
     userId?: string,
@@ -31,7 +31,7 @@ export class MessagesService {
     return await this.messageRepository.save(message);
   }
 
-  async getMessageBetweenUsers(fromId: number, toId: number) {
+  async getMessageBetweenUsers(fromId: string, toId: string) {
     return await this.messageRepository.find({
       where: [
         { senderId: fromId, receiverId: toId },

@@ -27,8 +27,8 @@ enum Role {
 
 type Messages {
   id: Int!
-  senderId: Int!
-  receiverId: Int!
+  senderId: String!
+  receiverId: String!
   content: String!
   parentId: Float
   timestamp: DateTime!
@@ -51,6 +51,7 @@ type Mutation {
   signUp(input: CreateUsersInput!): AuthPayload!
   signIn(input: SignInInput!): AuthPayload!
   createMessage(createMessageInput: CreateMessagesInput!): Messages!
+  getMessageBetweenUsers(receiverId: String!): [Messages!]!
 }
 
 input CreateUsersInput {
@@ -74,9 +75,8 @@ input SignInInput {
 }
 
 input CreateMessagesInput {
-  id: Int!
   content: String!
-  senderId: Int!
+  senderId: String!
   parentId: Float
-  receiverId: Int!
+  receiverId: String!
 }

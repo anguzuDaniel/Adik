@@ -6,18 +6,14 @@ import { Column } from 'typeorm';
 @InputType()
 export class CreateMessagesInput {
   @ApiProperty()
-  @Field(() => Int)
-  id: number;
-
-  @ApiProperty()
   @IsString()
   @Field()
   content: string;
 
   @ApiProperty()
   @IsString()
-  @Field(() => Int)
-  senderId: number;
+  @Field(() => String)
+  senderId: string;
 
   // Replying to message
   @Field({ nullable: true })
@@ -26,6 +22,6 @@ export class CreateMessagesInput {
 
   @ApiProperty()
   @IsString()
-  @Field(() => Int)
-  receiverId: number;
+  @Field(() => String)
+  receiverId: string;
 }

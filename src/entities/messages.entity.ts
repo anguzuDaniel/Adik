@@ -13,15 +13,15 @@ export class Messages {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Int)
-  @Column()
-  senderId: number;
-
-  @Field(() => Int)
-  @Column()
-  receiverId: number;
-
   @Field()
+  @Column()
+  senderId: string;
+
+  @Field(() => String)
+  @Column()
+  receiverId: string;
+
+  @Field(() => String)
   @Column()
   content: string;
 

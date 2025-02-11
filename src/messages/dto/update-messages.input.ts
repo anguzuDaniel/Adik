@@ -17,8 +17,8 @@ export class UpdateMessagesInput extends PartialType(CreateMessagesInput) {
 
   @ApiProperty()
   @IsString()
-  @Field(() => Int)
-  senderId: number;
+  @Field(() => String)
+  senderId: string;
 
   // Replying to message
   @Field({ nullable: true })
@@ -27,6 +27,6 @@ export class UpdateMessagesInput extends PartialType(CreateMessagesInput) {
 
   @ApiProperty()
   @IsString()
-  @Field(() => Int)
-  receiverId: number;
+  @Field(() => String)
+  receiverId: string;
 }

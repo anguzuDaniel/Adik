@@ -16,7 +16,7 @@ export class MessagesResolver {
     @Args('createMessageInput') createMessageInput: CreateMessagesInput,
     @CurrentUser() user: any,
   ) {
-    console.log('User', user.user.id);
+    console.log('User', user.user?.id);
     console.log('User id', createMessageInput.senderId);
 
     return this.messageService.sendMessage(
@@ -26,5 +26,15 @@ export class MessagesResolver {
       createMessageInput.parentId,
       user.user.id,
     );
+  }
+
+  @Mutation(() => [Messages])
+  @UseGuards(GqlAuthGuard)
+  getMessageBetweenUsers(
+    @Args('receiverId') receiverId: string,
+    @CurrentUser() user: any,
+  ): Promise<Messages[]> {
+    const senderId = user.user.id;
+    return this.messageService.getMessageBetweenUsers(senderId, receiverId);
   }
 }
