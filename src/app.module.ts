@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfig from '../config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesModule } from './messages/messages.module';
+import { JournalsModule } from './journals/journals.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MessagesModule } from './messages/messages.module';
     UsersModule,
     AuthModule,
     MessagesModule,
+    JournalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
