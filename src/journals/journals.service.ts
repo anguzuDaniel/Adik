@@ -8,8 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class JournalsService {
   constructor(
-    @InjectRepository(Journal)
-    private readonly journalRepository: Repository<Journal>,
+    @InjectRepository(Journal) private journalRepository: Repository<Journal>,
   ) {}
 
   async create(createJournalInput: CreateJournalInput) {

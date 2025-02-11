@@ -44,9 +44,19 @@ type DeleteMessagesResponse {
   message: String!
 }
 
+type Journal {
+  id: Int!
+  user: String!
+  content: String!
+  sentimentScore: Float!
+  createdAt: DateTime!
+}
+
 type Query {
   user(id: Int!): Users!
   viewer: Users!
+  journals: [Journal!]!
+  journal(id: Int!): Journal!
 }
 
 type Mutation {
@@ -58,6 +68,9 @@ type Mutation {
   createMessage(createMessageInput: CreateMessagesInput!): Messages!
   getMessageBetweenUsers(receiverId: String!): [Messages!]!
   deleteMessage(messageId: Float!): DeleteMessagesResponse!
+  createJournal(createJournalInput: CreateJournalInput!): Journal!
+  updateJournal(updateJournalInput: UpdateJournalInput!): Journal!
+  removeJournal(id: Int!): Journal!
 }
 
 input CreateUsersInput {
@@ -85,4 +98,20 @@ input CreateMessagesInput {
   senderId: String!
   parentId: Float
   receiverId: String!
+}
+
+input CreateJournalInput {
+  id: Int!
+  user: String!
+  content: String!
+  sentimentScore: Float!
+  createdAt: DateTime!
+}
+
+input UpdateJournalInput {
+  id: Int!
+  user: String
+  content: String
+  sentimentScore: Float
+  createdAt: DateTime
 }
