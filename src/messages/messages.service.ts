@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Messages } from '../entities/messages.entity';
 import { Repository } from 'typeorm';
+import { DeleteMessagesResponse } from './dto/delete-messages.response';
 
 @Injectable()
 export class MessagesService {
@@ -41,5 +42,24 @@ export class MessagesService {
         timestamp: 'ASC',
       },
     });
+  }
+
+  async deleteMessageById(messageId: number): Promise<DeleteMessagesResponse> {
+    if (!messageId) {
+      throw new UnauthorizedException('Message not found');
+    }
+
+    const message = await this.messageRepository.findOne({ where: { id: messageId } });
+
+    if (!message) {
+      throw new NotFoundException(`Message with ID ${messageId} not found`);
+    }
+
+    await this.messageRepository.delete(messageId);
+
+    return {
+      success: true,
+      message: `Message with ID ${messageId} has been successfully deleted.`,
+    };
   }
 }

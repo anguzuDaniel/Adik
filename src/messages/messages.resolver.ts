@@ -5,6 +5,7 @@ import { Messages } from 'src/entities/messages.entity';
 import { GqlAuthGuard } from '../auth/dto/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { DeleteMessagesResponse } from './dto/delete-messages.response';
 
 @Resolver(() => Messages)
 export class MessagesResolver {
@@ -36,5 +37,11 @@ export class MessagesResolver {
   ): Promise<Messages[]> {
     const senderId = user.user.id;
     return this.messageService.getMessageBetweenUsers(senderId, receiverId);
+  }
+
+  @Mutation(() => DeleteMessagesResponse)
+  @UseGuards(GqlAuthGuard)
+  deleteMessage(@Args('messageId') messageId: number) {
+    return this.messageService.deleteMessageById(messageId);
   }
 }
