@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Messages } from '../entities/messages.entity';
 import { Repository } from 'typeorm';
@@ -15,13 +15,19 @@ export class MessagesService {
     receiverId: number,
     content: string,
     parentId?: number,
+    userId?: string,
   ): Promise<Messages> {
+    if (userId !== senderId.toString()) {
+      throw new UnauthorizedException('You can only send message as yourself.');
+    }
+
     const message = this.messageRepository.create({
       senderId,
       receiverId,
       content,
       parentId,
     });
+
     return await this.messageRepository.save(message);
   }
 

@@ -1,0 +1,82 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Users {
+  id: Int!
+  username: String!
+  email: String!
+  role: String!
+  supabaseUserId: String!
+  password: String!
+}
+
+type AuthPayload {
+  userId: ID!
+  username: String
+  email: String!
+  role: Role!
+  accessToken: String!
+  message: String
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+type Messages {
+  id: Int!
+  senderId: Int!
+  receiverId: Int!
+  content: String!
+  parentId: Float
+  timestamp: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  user(id: Int!): Users!
+  viewer: Users!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUsersInput!): Users!
+  updateUser(updateUserInput: UpdateUsersInput!): Users!
+  removeUser(id: Int!): Users!
+  signUp(input: CreateUsersInput!): AuthPayload!
+  signIn(input: SignInInput!): AuthPayload!
+  createMessage(createMessageInput: CreateMessagesInput!): Messages!
+}
+
+input CreateUsersInput {
+  username: String!
+  email: String!
+  role: Role!
+  password: String!
+}
+
+input UpdateUsersInput {
+  username: String
+  email: String
+  role: String
+  password: String
+  id: Int!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input CreateMessagesInput {
+  id: Int!
+  content: String!
+  senderId: Int!
+  parentId: Float
+  receiverId: Int!
+}

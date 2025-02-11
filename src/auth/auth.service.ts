@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   async registerUser({ username, email, role, password }: CreateUsersInput) {
-    const { error } = await this.supabase.auth.signUp({
+    const { data, error } = await this.supabase.auth.signUp({
       phone: '',
       email,
       password,
@@ -51,6 +51,7 @@ export class AuthService {
       email,
       password,
       role: role,
+      supabaseUserId: data.user?.id,
     });
 
     if (insertError) {
@@ -68,7 +69,7 @@ export class AuthService {
     }
 
     const supabaseUser: User = {
-      id: fullUser.id.toString(),
+      id: fullUser.supabaseUserId.toString(),
       email: fullUser.email,
       app_metadata: {}, // Empty object or default data
       user_metadata: {}, // Empty object or default data

@@ -32,7 +32,7 @@ import { MessagesModule } from './messages/messages.module';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
       context: ({ req }) => ({ req }),

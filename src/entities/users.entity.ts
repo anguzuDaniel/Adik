@@ -32,6 +32,10 @@ export class Users {
   role: Role;
 
   @Field()
+  @Column()
+  supabaseUserId: string;
+
+  @Field()
   @IsString()
   @MinLength(1)
   @Column()

@@ -1,5 +1,5 @@
 import { CreateUsersInput } from './create-users.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType, Int } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../enums/Role';
 
