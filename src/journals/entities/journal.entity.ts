@@ -16,8 +16,8 @@ export class Journal {
 
   @Field(() => String)
   @Column()
-  @ManyToOne(() => Users, { onDelete: 'CASCADE' })
-  userId: string;
+  @ManyToOne(() => Users, (user) => user.journals, { onDelete: 'CASCADE' })
+  userId: Users;
 
   @Field()
   @Column('text')

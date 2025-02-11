@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, MinLength } from 'class-validator';
+import { Journal } from '../journals/entities/journal.entity';
 
 @ObjectType()
 @Entity()
@@ -40,4 +41,7 @@ export class Users {
   @MinLength(1)
   @Column()
   password: string;
+
+  @OneToMany(() => Journal, (journal) => journal.userId, { cascade: true })
+  journals: Journal[];
 }

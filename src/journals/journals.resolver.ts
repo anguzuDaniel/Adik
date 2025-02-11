@@ -9,7 +9,9 @@ export class JournalsResolver {
   constructor(private readonly journalsService: JournalsService) {}
 
   @Mutation(() => Journal)
-  createJournal(@Args('createJournalInput') createJournalInput: CreateJournalInput) {
+  createJournal(
+    @Args('createJournalInput') createJournalInput: CreateJournalInput,
+  ) {
     return this.journalsService.create(createJournalInput);
   }
 
@@ -24,8 +26,13 @@ export class JournalsResolver {
   }
 
   @Mutation(() => Journal)
-  updateJournal(@Args('updateJournalInput') updateJournalInput: UpdateJournalInput) {
-    return this.journalsService.update(updateJournalInput.id, updateJournalInput);
+  updateJournal(
+    @Args('updateJournalInput') updateJournalInput: UpdateJournalInput,
+  ) {
+    return this.journalsService.update(
+      updateJournalInput.id,
+      updateJournalInput,
+    );
   }
 
   @Mutation(() => Journal)
