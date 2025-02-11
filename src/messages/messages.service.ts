@@ -53,7 +53,9 @@ export class MessagesService {
       throw new UnauthorizedException('Message not found');
     }
 
-    const message = await this.messageRepository.findOne({ where: { id: messageId } });
+    const message = await this.messageRepository.findOne({
+      where: { id: messageId },
+    });
 
     if (!message) {
       throw new NotFoundException(`Message with ID ${messageId} not found`);

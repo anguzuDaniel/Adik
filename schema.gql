@@ -52,11 +52,21 @@ type Journal {
   createdAt: DateTime!
 }
 
+type Report {
+  id: Int!
+  reporterId: String!
+  reportedUserId: String!
+  reason: String!
+  status: String!
+}
+
 type Query {
   user(id: Int!): Users!
   viewer: Users!
   journals: [Journal!]!
   journal(id: Int!): Journal!
+  reports: [Report!]!
+  report(id: Int!): Report!
 }
 
 type Mutation {
@@ -71,6 +81,9 @@ type Mutation {
   createJournal(createJournalInput: CreateJournalInput!): Journal!
   updateJournal(updateJournalInput: UpdateJournalInput!): Journal!
   removeJournal(id: Int!): Journal!
+  createReport(createReportInput: CreateReportInput!): Report!
+  updateReport(updateReportInput: UpdateReportInput!): Report!
+  removeReport(id: Int!): Report!
 }
 
 input CreateUsersInput {
@@ -114,4 +127,23 @@ input UpdateJournalInput {
   content: String
   sentimentScore: Float
   createdAt: DateTime
+}
+
+input CreateReportInput {
+  id: Int!
+  reporterId: String!
+  reason: String!
+  status: ReportStatus!
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+}
+
+input UpdateReportInput {
+  id: Int!
+  reporterId: String!
+  reason: String!
+  status: ReportStatus!
 }

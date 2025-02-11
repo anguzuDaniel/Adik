@@ -1,26 +1,69 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateReportInput } from './dto/create-report.input';
 import { UpdateReportInput } from './dto/update-report.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Report } from './entities/report.entity';
 
 @Injectable()
 export class ReportsService {
+  constructor(
+    @InjectRepository(Report) private reportRepository: Repository<Report>,
+  ) {}
+
   create(createReportInput: CreateReportInput) {
-    return 'This action adds a new report';
+    return this.reportRepository.create(createReportInput);
   }
 
   findAll() {
-    return `This action returns all reports`;
+    return this.reportRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} report`;
+  async findOne(id: number) {
+    if (!id) {
+      throw new UnauthorizedException('You need to provide and Id.');
+    }
+
+    const report = await this.reportRepository.findOneBy({ id });
+
+    if (!report) {
+      throw new Error(`Report with id ${id} doesn't exist.`);
+    }
+
+    return report;
   }
 
-  update(id: number, updateReportInput: UpdateReportInput) {
-    return `This action updates a #${id} report`;
+  async update(id: number, updateReportInput: UpdateReportInput) {
+    if (id === null || id === undefined) {
+      throw new NotFoundException('You need to provide and Id.');
+    }
+
+    const report = await this.reportRepository.findOneBy({ id });
+
+    if (!report) {
+      throw new NotFoundException(`Report with id ${id} doesn't exist.`);
+    }
+
+    const updatedReport = { ...report, ...updateReportInput };
+
+    return await this.reportRepository.save(updatedReport);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} report`;
+  async remove(id: number) {
+    if (!id) {
+      throw new UnauthorizedException('You need to provide an Id.');
+    }
+
+    const report = await this.reportRepository.findOneBy({ id });
+
+    if (!report) {
+      throw new Error(`Report with Id ${id} not found!`);
+    }
+
+    return this.reportRepository.remove(report);
   }
 }
