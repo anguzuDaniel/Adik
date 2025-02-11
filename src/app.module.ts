@@ -10,6 +10,7 @@ import dbConfig from '../config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesModule } from './messages/messages.module';
 import { JournalsModule } from './journals/journals.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { JournalsModule } from './journals/journals.module';
     AuthModule,
     MessagesModule,
     JournalsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
