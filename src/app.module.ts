@@ -12,6 +12,7 @@ import { MessagesModule } from './messages/messages.module';
 import { JournalsModule } from './journals/journals.module';
 import { ReportsModule } from './reports/reports.module';
 import { MatchesModule } from './matches/matches.module';
+import { ResourcesModule } from './resources/resources.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MatchesModule } from './matches/matches.module';
     JournalsModule,
     ReportsModule,
     MatchesModule,
+    ResourcesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
