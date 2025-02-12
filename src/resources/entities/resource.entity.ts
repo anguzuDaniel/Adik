@@ -1,13 +1,13 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { ResourceType } from '../../enums/ResourceType';
-import { Column } from 'typeorm';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 export class Resource {
   @ApiProperty()
   @Field(() => Int)
-  @Column()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @ApiProperty()
