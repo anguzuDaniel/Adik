@@ -68,6 +68,11 @@ type Match {
   static: String!
 }
 
+type Resource {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   user(id: Int!): Users!
   viewer: Users!
@@ -77,6 +82,8 @@ type Query {
   report(id: Int!): Report!
   matches: [Match!]!
   match(id: Int!): Match!
+  resources: [Resource!]!
+  resource(id: Int!): Resource!
 }
 
 type Mutation {
@@ -97,6 +104,9 @@ type Mutation {
   createMatch(createMatchInput: CreateMatchInput!): Match!
   updateMatch(updateMatchInput: UpdateMatchInput!): Match!
   removeMatch(id: Int!): Match!
+  createResource(createResourceInput: CreateResourceInput!): Resource!
+  updateResource(updateResourceInput: UpdateResourceInput!): Resource!
+  removeResource(id: Int!): Resource!
 }
 
 input CreateUsersInput {
@@ -183,4 +193,15 @@ input UpdateMatchInput {
   userId: String
   matchedUserId: String
   static: String
+}
+
+input CreateResourceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateResourceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
