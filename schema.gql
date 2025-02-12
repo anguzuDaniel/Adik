@@ -69,8 +69,10 @@ type Match {
 }
 
 type Resource {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  title: String!
+  type: String!
+  url: String!
 }
 
 type Query {
