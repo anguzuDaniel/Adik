@@ -198,12 +198,15 @@ input UpdateMatchInput {
 }
 
 input CreateResourceInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  title: String!
+  type: String!
+  url: String!
 }
 
 input UpdateResourceInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
+  title: String!
+  type: String!
+  url: String!
 }

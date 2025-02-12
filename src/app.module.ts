@@ -37,6 +37,10 @@ import { ResourcesModule } from './resources/resources.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+      uploads: {
+        maxFileSize: 10000000, // 10MB
+        maxFiles: 5,
+      },
       debug: true,
       playground: true,
       context: ({ req }) => ({ req }),
