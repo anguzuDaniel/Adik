@@ -9,12 +9,15 @@ export class UpdateUsersInput extends PartialType(CreateUsersInput) {
   @Field(() => Int)
   id: number;
 
+  @ApiProperty()
   @Field({ nullable: true })
   email?: string;
 
+  @ApiProperty()
   @Field({ nullable: true })
   password?: string;
 
+  @ApiProperty()
   @Field({ nullable: true })
   role?: Role;
 }

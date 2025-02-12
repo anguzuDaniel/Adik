@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, MinLength } from 'class-validator';
+import { RecoveryStage } from '../enums/RecoveryStage';
 
 @ObjectType()
 @Entity()
@@ -30,6 +31,14 @@ export class Users {
     default: Role.USER,
   })
   role: Role;
+
+  @Field()
+  @Column({
+    type: 'enum',
+    enum: RecoveryStage,
+    default: RecoveryStage.PRE_CONTEMPLATION,
+  })
+  recoveryStage: RecoveryStage;
 
   @Field()
   @Column()

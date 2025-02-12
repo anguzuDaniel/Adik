@@ -7,6 +7,7 @@ type Users {
   username: String!
   email: String!
   role: String!
+  recoveryStage: String!
   supabaseUserId: String!
   password: String!
 }
@@ -102,13 +103,23 @@ input CreateUsersInput {
   username: String!
   email: String!
   role: Role!
+  recoveryStage: RecoveryStage!
   password: String!
+}
+
+enum RecoveryStage {
+  PRE_CONTEMPLATION
+  CONTEMPLATION
+  PREPARATION
+  ACTION
+  MAINTENANCE
 }
 
 input UpdateUsersInput {
   username: String
   email: String
   role: String
+  recoveryStage: RecoveryStage
   password: String
   id: Int!
 }
