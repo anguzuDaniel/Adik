@@ -1,21 +1,18 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
 import { ResourceType } from '../../enums/ResourceType.js';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
+@Entity()
 export class Resource {
-  @ApiProperty()
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
   @Field()
   @Column()
   title: string;
 
-  @ApiProperty()
   @Field()
   @Column({
     type: 'enum',
@@ -24,7 +21,6 @@ export class Resource {
   })
   type: ResourceType;
 
-  @ApiProperty()
   @Field()
   @Column()
   url: string;
