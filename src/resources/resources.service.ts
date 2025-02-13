@@ -82,11 +82,13 @@ export class ResourcesService {
       .upload(path, fileBuffer, {
         contentType: fileType,
       });
+
     if (error) {
       throw new InternalServerErrorException(
         `File upload failed: ${error.message}`,
       );
     }
+
     return {
       message: 'File uploaded successfully',
       result: data?.path,

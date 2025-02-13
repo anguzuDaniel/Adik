@@ -21,10 +21,24 @@ export class JournalsService {
   }
 
   findOne(id: number) {
+    if (!id) {
+      throw new Error('Please provide an id');
+    }
+
     return this.journalRepository.find({ where: { id } });
   }
 
   update(id: number, updateJournalInput: UpdateJournalInput) {
+    if (id) {
+      throw new Error('Please provide an id');
+    }
+
+    const journal = this.journalRepository.findOne({ where: { id } });
+
+    if (!journal) {
+      throw new Error('Journal not found');
+    }
+
     return this.journalRepository.update(id, updateJournalInput);
   }
 

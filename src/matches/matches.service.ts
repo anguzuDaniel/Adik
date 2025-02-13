@@ -27,7 +27,17 @@ export class MatchesService {
     return await this.matchRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateMatchInput: UpdateMatchInput) {
+  async update(id: number, updateMatchInput: UpdateMatchInput) {
+    if (!id) {
+      throw new NotFoundException('Please provide and Id');
+    }
+
+    const match = await this.matchRepository.findOne({ where: { id } });
+
+    if (!match) {
+      throw new NotFoundException('Match not found');
+    }
+
     return this.matchRepository.update(id, updateMatchInput);
   }
 
