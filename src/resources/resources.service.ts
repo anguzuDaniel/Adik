@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Resource } from './entities/resource.entity.js';
 import { Repository } from 'typeorm';
 import { UploadFileResponse } from './dto/upload-file-reponse.dto.js';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ResourcesService {
@@ -18,9 +19,15 @@ export class ResourcesService {
   constructor(
     @InjectRepository(Resource)
     private resourceRepository: Repository<Resource>,
+    private configService: ConfigService,
   ) {
-    const supabaseUrl = process.env.SUPABASE_URL as string;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string; // Use service role key for server-side operations
+    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('SUPABASE_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase URL and Key are required');
+    }
+
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 

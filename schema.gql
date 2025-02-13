@@ -75,6 +75,11 @@ type Resource {
   url: String!
 }
 
+type UploadFileResponse {
+  message: String!
+  result: String!
+}
+
 type Query {
   user(id: Int!): Users!
   viewer: Users!
@@ -109,6 +114,7 @@ type Mutation {
   createResource(createResourceInput: CreateResourceInput!): Resource!
   updateResource(updateResourceInput: UpdateResourceInput!): Resource!
   removeResource(id: Int!): Resource!
+  uploadFile(file: Upload!, bucket: String): UploadFileResponse!
 }
 
 input CreateUsersInput {
@@ -210,3 +216,6 @@ input UpdateResourceInput {
   type: String!
   url: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

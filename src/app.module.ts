@@ -13,6 +13,11 @@ import { JournalsModule } from './journals/journals.module.js';
 import { ReportsModule } from './reports/reports.module.js';
 import { MatchesModule } from './matches/matches.module.js';
 import { ResourcesModule } from './resources/resources.module.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 @Module({
   imports: [
