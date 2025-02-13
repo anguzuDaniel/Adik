@@ -1,8 +1,8 @@
-import { CreateResourceInput } from './create-resource.input';
+import { CreateResourceInput } from './create-resource.input.js';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Column } from 'typeorm';
-import { ResourceType } from '../../enums/ResourceType';
+import { ResourceType } from '../../enums/ResourceType.js';
 
 @InputType()
 export class UpdateResourceInput extends PartialType(CreateResourceInput) {

@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AuthModule } from './auth/auth.module';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module.js';
+import { AppService } from './app.service.js';
+import { AppController } from './app.controller.js';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import dbConfig from '../config/db.config';
+import dbConfig from '../config/db.config.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessagesModule } from './messages/messages.module';
-import { JournalsModule } from './journals/journals.module';
-import { ReportsModule } from './reports/reports.module';
-import { MatchesModule } from './matches/matches.module';
-import { ResourcesModule } from './resources/resources.module';
+import { MessagesModule } from './messages/messages.module.js';
+import { JournalsModule } from './journals/journals.module.js';
+import { ReportsModule } from './reports/reports.module.js';
+import { MatchesModule } from './matches/matches.module.js';
+import { ResourcesModule } from './resources/resources.module.js';
 
 @Module({
   imports: [
@@ -37,10 +37,6 @@ import { ResourcesModule } from './resources/resources.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
-      uploads: {
-        maxFileSize: 10000000, // 10MB
-        maxFiles: 5,
-      },
       debug: true,
       playground: true,
       context: ({ req }) => ({ req }),

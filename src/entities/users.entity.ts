@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { Role } from '../enums/Role';
+import { Role } from '../enums/Role.js';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsString, MinLength } from 'class-validator';
-import { RecoveryStage } from '../enums/RecoveryStage';
+import { RecoveryStage } from '../enums/RecoveryStage.js';
 
 @ObjectType()
 @Entity()

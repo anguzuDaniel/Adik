@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MatchesService } from './matches.service';
-import { MatchesResolver } from './matches.resolver';
+import { MatchesService } from './matches.service.js';
+import { MatchesResolver } from './matches.resolver.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Match } from './entities/match.entity';
+import { Match } from './entities/match.entity.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Match])],

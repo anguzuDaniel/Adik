@@ -4,16 +4,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from '../enums/Role';
-import { AuthJwtPayload } from './types/auth-jwt-payload';
-import { SignInInput } from './dto/signInInput';
+import { Role } from '../enums/Role.js';
+import { AuthJwtPayload } from './types/auth-jwt-payload.js';
+import { SignInInput } from './dto/signInInput.js';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { AuthPayload } from './entities/auth-payload';
-import { Users } from 'src/entities/users.entity';
+import { AuthPayload } from './entities/auth-payload.js';
 import * as process from 'node:process';
-import { CreateUsersInput } from '../users/dto/create-users.input';
+import { CreateUsersInput } from '../users/dto/create-users.input.js';
+import { Users } from '../entities/users.entity.js';
 
 @Injectable()
 export class AuthService {

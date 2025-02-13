@@ -4,9 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Messages } from '../entities/messages.entity';
+import { Messages } from '../entities/messages.entity.js';
 import { Repository } from 'typeorm';
-import { DeleteMessagesResponse } from './dto/delete-messages.response';
+import { DeleteMessagesResponse } from './dto/delete-messages.response.js';
 
 @Injectable()
 export class MessagesService {

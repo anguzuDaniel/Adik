@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions.js';
 import { registerAs } from '@nestjs/config';
 
 export default registerAs(

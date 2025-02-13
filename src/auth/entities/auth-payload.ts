@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { Role } from '../../enums/Role';
+import { Role } from '../../enums/Role.js';
 
 @ObjectType()
 export class AuthPayload {

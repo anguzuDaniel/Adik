@@ -1,13 +1,16 @@
 import 'reflect-metadata';
+import 'module-alias/register.js';
 
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import metadata from './metadata';
+import metadata from './metadata.js';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors(); // Enable CORS for all routes
+  app.use(graphqlUploadExpress({ maxFileSize: 100000, maxFiles: 10 }));
 
   // Swagger Configuration
   const config = new DocumentBuilder()

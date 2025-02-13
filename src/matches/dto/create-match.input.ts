@@ -1,6 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
-import { MatchStatus } from '../../enums/MatchStatus';
+import { MatchStatus } from '../../enums/MatchStatus.js';
 import { ApiProperty } from '@nestjs/swagger';
 
 @InputType()

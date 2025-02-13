@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ReportsService } from './reports.service';
-import { ReportsResolver } from './reports.resolver';
+import { ReportsService } from './reports.service.js';
+import { ReportsResolver } from './reports.resolver.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Report } from './entities/report.entity';
+import { Report } from './entities/report.entity.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Report])],

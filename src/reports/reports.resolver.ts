@@ -1,8 +1,8 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { ReportsService } from './reports.service';
-import { Report } from './entities/report.entity';
-import { CreateReportInput } from './dto/create-report.input';
-import { UpdateReportInput } from './dto/update-report.input';
+import { ReportsService } from './reports.service.js';
+import { Report } from './entities/report.entity.js';
+import { CreateReportInput } from './dto/create-report.input.js';
+import { UpdateReportInput } from './dto/update-report.input.js';
 
 @Resolver(() => Report)
 export class ReportsResolver {

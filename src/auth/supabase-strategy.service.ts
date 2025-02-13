@@ -6,7 +6,7 @@ import { SupabaseAuthStrategy } from 'nestjs-supabase-auth';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import * as process from 'node:process';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 
 @Injectable()
 export class SupabaseStrategy extends PassportStrategy(

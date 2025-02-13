@@ -3,11 +3,11 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateReportInput } from './dto/create-report.input';
-import { UpdateReportInput } from './dto/update-report.input';
+import { CreateReportInput } from './dto/create-report.input.js';
+import { UpdateReportInput } from './dto/update-report.input.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Report } from './entities/report.entity';
+import { Report } from './entities/report.entity.js';
 
 @Injectable()
 export class ReportsService {

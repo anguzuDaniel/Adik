@@ -4,7 +4,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { MessagesService } from './messages.service';
+import { MessagesService } from './messages.service.js';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })

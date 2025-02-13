@@ -1,4 +1,4 @@
-import { CreateMessagesInput } from './create-messages.input';
+import { CreateMessagesInput } from './create-messages.input.js';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';

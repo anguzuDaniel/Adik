@@ -1,31 +1,26 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { ReportStatus } from '../../enums/ReportStatus';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ReportStatus } from '../../enums/ReportStatus.js';
 
 @ObjectType()
+@Entity()
 export class Report {
-  @ApiProperty()
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
   @Field()
   @Column()
   reporterId: string;
 
-  @ApiProperty()
   @Field()
   @Column()
   reportedUserId: string;
 
-  @ApiProperty()
   @Field()
   @Column('text')
   reason: string;
 
-  @ApiProperty()
   @Field()
   @Column({
     type: 'enum',

@@ -1,4 +1,4 @@
-import { CreateJournalInput } from './create-journal.input';
+import { CreateJournalInput } from './create-journal.input.js';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()

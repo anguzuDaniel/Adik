@@ -1,7 +1,7 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Column } from 'typeorm';
-import { ResourceType } from '../../enums/ResourceType';
+import { ResourceType } from '../../enums/ResourceType.js';
 
 @InputType()
 export class CreateResourceInput {

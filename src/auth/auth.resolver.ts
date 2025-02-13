@@ -1,13 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
-import { SignInInput } from './dto/signInInput';
-import { AuthPayload } from './entities/auth-payload';
-import { Users } from '../entities/users.entity';
-import { GqlAuthGuard } from './dto/gql-auth.guard';
+import { AuthService } from './auth.service.js';
+import { SignInInput } from './dto/signInInput.js';
+import { AuthPayload } from './entities/auth-payload.js';
+import { Users } from '../entities/users.entity.js';
+import { GqlAuthGuard } from './dto/gql-auth.guard.js';
 import { SupabaseAuthUser } from 'nestjs-supabase-auth';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { CreateUsersInput } from '../users/dto/create-users.input';
+import { CurrentUser } from './decorators/current-user.decorator.js';
+import { CreateUsersInput } from '../users/dto/create-users.input.js';
 
 /**
  * Write comments

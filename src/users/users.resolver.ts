@@ -1,9 +1,9 @@
-import { Resolver, Query, Mutation, Args, ID, Int } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { CreateUsersInput } from './dto/create-users.input';
-import { UpdateUsersInput } from './dto/update-users.input';
-import { Users } from '../entities/users.entity';
-import { GqlAuthGuard } from '../auth/dto/gql-auth.guard';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { UsersService } from './users.service.js';
+import { CreateUsersInput } from './dto/create-users.input.js';
+import { UpdateUsersInput } from './dto/update-users.input.js';
+import { Users } from '../entities/users.entity.js';
+import { GqlAuthGuard } from '../auth/dto/gql-auth.guard.js';
 import { UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 

@@ -1,11 +1,11 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { MessagesService } from './messages.service';
-import { CreateMessagesInput } from './dto/create-messages.input';
-import { Messages } from 'src/entities/messages.entity';
-import { GqlAuthGuard } from '../auth/dto/gql-auth.guard';
+import { MessagesService } from './messages.service.js';
+import { CreateMessagesInput } from './dto/create-messages.input.js';
+import { Messages } from '../entities/messages.entity.js';
+import { GqlAuthGuard } from '../auth/dto/gql-auth.guard.js';
 import { UseGuards } from '@nestjs/common';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { DeleteMessagesResponse } from './dto/delete-messages.response';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { DeleteMessagesResponse } from './dto/delete-messages.response.js';
 
 @Resolver(() => Messages)
 export class MessagesResolver {

@@ -1,4 +1,4 @@
-import { CreateMatchInput } from './create-match.input';
+import { CreateMatchInput } from './create-match.input.js';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()

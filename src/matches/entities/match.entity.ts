@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { MatchStatus } from 'src/enums/MatchStatus';
+import { MatchStatus } from '../../enums/MatchStatus.js';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()

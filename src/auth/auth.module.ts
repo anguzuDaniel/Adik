@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthResolver } from './auth.resolver';
-import { SupabaseStrategy } from './supabase-strategy.service';
+import { AuthService } from './auth.service.js';
+import { AuthResolver } from './auth.resolver.js';
+import { SupabaseStrategy } from './supabase-strategy.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from '../entities/users.entity';
+import { Users } from '../entities/users.entity.js';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'node:process';
-import { UsersModule } from '../users/users.module';
+import { UsersModule } from '../users/users.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { GqlAuthGuard } from './dto/gql-auth.guard';
+import { GqlAuthGuard } from './dto/gql-auth.guard.js';
 
 @Module({
   imports: [

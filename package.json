@@ -1,6 +1,7 @@
 {
   "name": "adik",
   "version": "0.0.1",
+  "type": "module",
   "description": "",
   "author": "",
   "private": true,
@@ -46,6 +47,7 @@
     "graphql": "^16.10.0",
     "graphql-upload": "^17.0.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mysql2": "^3.12.0",
     "nestjs-supabase-auth": "^1.0.9",
     "next-auth": "^4.24.11",
@@ -69,6 +71,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.10",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
@@ -111,5 +114,8 @@
   },
   "compilerOptions": {
     "skipLibCheck": true
+  },
+  "_moduleAliases": {
+    "src": "dist/src"
   }
 }

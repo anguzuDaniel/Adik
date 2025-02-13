@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateJournalInput } from './dto/create-journal.input';
-import { UpdateJournalInput } from './dto/update-journal.input';
+import { CreateJournalInput } from './dto/create-journal.input.js';
+import { UpdateJournalInput } from './dto/update-journal.input.js';
 import { Repository } from 'typeorm';
-import { Journal } from './entities/journal.entity';
+import { Journal } from './entities/journal.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
