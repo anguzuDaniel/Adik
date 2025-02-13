@@ -1,7 +1,3 @@
-Here’s a comprehensive `README.md` for your open-source API project built with **NestJS** and **GraphQL**. It includes an overview of the project, setup instructions, API details, and information about the database schema.
-
----
-
 # Adik API
 
 Adik is an open-source API built with **NestJS** and **GraphQL** to support a platform for mental health and recovery. It provides functionalities for user management, messaging, resource sharing, journaling, and reporting. This API is designed to be modular, scalable, and easy to extend.
