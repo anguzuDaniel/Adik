@@ -1,99 +1,298 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Here’s a comprehensive `README.md` for your open-source API project built with **NestJS** and **GraphQL**. It includes an overview of the project, setup instructions, API details, and information about the database schema.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Adik API
 
-## Description
+Adik is an open-source API built with **NestJS** and **GraphQL** to support a platform for mental health and recovery. It provides functionalities for user management, messaging, resource sharing, journaling, and reporting. This API is designed to be modular, scalable, and easy to extend.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Project setup
+- **User Management**: Register, authenticate, and manage users with roles (user, mentor, counselor).
+- **Messaging**: Send and receive messages between users.
+- **Matching**: Match users based on recovery stages and preferences.
+- **Resources**: Share and access recovery resources (articles, videos, podcasts).
+- **Journaling**: Allow users to maintain journals with sentiment analysis.
+- **Reporting**: Report users for inappropriate behavior and manage reports.
 
-```bash
-$ npm install
-```
+## Technologies Used
 
-## Compile and run the project
+- **NestJS**: A progressive Node.js framework for building efficient and scalable server-side applications.
+- **GraphQL**: A query language for APIs that provides a flexible and efficient way to fetch data.
+- **TypeORM**: An ORM for TypeScript and JavaScript that supports PostgreSQL, MySQL, and other databases.
+- **PostgreSQL**: A powerful, open-source relational database system.
+- **Supabase**: An open-source Firebase alternative for storage and authentication.
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+## Getting Started
 
-# production mode
-$ npm run start:prod
-```
+### Prerequisites
 
-## Run tests
+- Node.js (v16 or higher)
+- PostgreSQL (or any other supported database)
+- npm or yarn
 
-```bash
-# unit tests
-$ npm run test
+### Installation
 
-# e2e tests
-$ npm run test:e2e
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/anguzuDaniel/Adik.git
+   cd Adik
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Deployment
+3. **Set up environment variables:**
+   Create a `.env` file in the root directory and add the following variables:
+   ```env
+   DATABASE_URL=postgres://username:password@localhost:5432/adik
+   JWT_SECRET=your_jwt_secret
+   SUPABASE_URL=https://your-project-ref.supabase.co
+   SUPABASE_KEY=your-supabase-key
+   ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+4. **Run database migrations:**
+   ```bash
+   npm run typeorm migration:run
+   ```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+5. **Start the development server:**
+   ```bash
+   npm run start:dev
+   ```
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+6. **Access the GraphQL Playground:**
+   Open your browser and navigate to `http://localhost:3000/graphql` to interact with the API.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Database Schema
 
-Check out a few resources that may come in handy when working with NestJS:
+The database consists of the following tables:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 1. **Users Table**
+- `id` (Primary Key)
+- `username`
+- `email` (optional for anonymous users)
+- `role` (user, mentor, counselor)
+- `recovery_stage` (early, maintenance, etc.)
+- `created_at`, `updated_at`
 
-## Support
+### 2. **Messages Table**
+- `id` (Primary Key)
+- `sender_id` (Foreign Key to Users)
+- `receiver_id` (Foreign Key to Users)
+- `content`
+- `timestamp`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 3. **Matches Table**
+- `id` (Primary Key)
+- `user_id` (Foreign Key to Users)
+- `matched_user_id` (Foreign Key to Users)
+- `status` (pending, accepted, rejected)
 
-## Stay in touch
+### 4. **Resources Table**
+- `id` (Primary Key)
+- `title`
+- `type` (article, video, podcast)
+- `url`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 5. **Journals Table**
+- `id` (Primary Key)
+- `user_id` (Foreign Key to Users)
+- `entry_content`
+- `sentiment_score`
+- `created_at`
+
+### 6. **Reports Table**
+- `id` (Primary Key)
+- `reporter_id` (Foreign Key to Users)
+- `reported_user_id` (Foreign Key to Users)
+- `reason`
+- `status` (pending, resolved)
+
+---
+
+## API Documentation
+
+### GraphQL Queries and Mutations
+
+#### Users
+- **Query:**
+  ```graphql
+  query {
+    users {
+      id
+      username
+      email
+      role
+      recovery_stage
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    createUser(input: { username: "john_doe", email: "john@example.com", role: "user", recovery_stage: "early" }) {
+      id
+      username
+    }
+  }
+  ```
+
+#### Messages
+- **Query:**
+  ```graphql
+  query {
+    messages(senderId: 1, receiverId: 2) {
+      id
+      content
+      timestamp
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    sendMessage(input: { senderId: 1, receiverId: 2, content: "Hello!" }) {
+      id
+      content
+    }
+  }
+  ```
+
+#### Matches
+- **Query:**
+  ```graphql
+  query {
+    matches(userId: 1) {
+      id
+      matched_user_id
+      status
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    createMatch(input: { userId: 1, matchedUserId: 2, status: "pending" }) {
+      id
+      status
+    }
+  }
+  ```
+
+#### Resources
+- **Query:**
+  ```graphql
+  query {
+    resources {
+      id
+      title
+      type
+      url
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    createResource(input: { title: "Recovery Tips", type: "article", url: "https://example.com" }) {
+      id
+      title
+    }
+  }
+  ```
+
+#### Journals
+- **Query:**
+  ```graphql
+  query {
+    journals(userId: 1) {
+      id
+      entry_content
+      sentiment_score
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    createJournal(input: { userId: 1, entryContent: "Today was a good day.", sentimentScore: 0.8 }) {
+      id
+      entry_content
+    }
+  }
+  ```
+
+#### Reports
+- **Query:**
+  ```graphql
+  query {
+    reports {
+      id
+      reason
+      status
+    }
+  }
+  ```
+
+- **Mutation:**
+  ```graphql
+  mutation {
+    createReport(input: { reporterId: 1, reportedUserId: 2, reason: "Inappropriate behavior" }) {
+      id
+      reason
+    }
+  }
+  ```
+
+---
+
+## Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeatureName`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeatureName`).
+5. Open a pull request.
+
+---
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- **NestJS** for providing a robust framework.
+- **GraphQL** for enabling flexible API queries.
+- **TypeORM** for simplifying database interactions.
+- **Supabase** for storage and authentication.
+
+---
+
+## Contact
+
+For questions or feedback, feel free to reach out:
+
+- **Daniel Anguzu**  
+  GitHub: [anguzuDaniel](https://github.com/anguzuDaniel)  
+  Email: [anguzud7@example.com](mailto:your-email@example.com)
+
+---
+
+Thank you for using **Adik API**! 🚀
