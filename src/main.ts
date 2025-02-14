@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import 'module-alias/register.js';
+import { randomBytes } from 'crypto';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';

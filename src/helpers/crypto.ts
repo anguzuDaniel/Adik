@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = process.env.ENCRPTION_KEY || "secret-key";
+const SECRET_KEY = process.env.ENCRYPTION_KEY || "secret-key";
 
 /**
  * Encrypt a message using AES encryption.
