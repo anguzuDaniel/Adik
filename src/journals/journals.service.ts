@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateJournalInput } from './dto/create-journal.input.js';
 import { UpdateJournalInput } from './dto/update-journal.input.js';
 import { Repository } from 'typeorm';
-import { Journal } from './entities/journal.entity.js';
+import { Journal } from '../entities/journal.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -11,9 +11,11 @@ export class JournalsService {
     @InjectRepository(Journal) private journalRepository: Repository<Journal>,
   ) {}
 
-  async create(createJournalInput: CreateJournalInput) {
-    const journal = this.journalRepository.create(createJournalInput);
-    return await this.journalRepository.save(journal);
+  async create(createDto: CreateJournalInput & { userId: string }) {
+    return await this.journalRepository.save({
+      ...createDto,
+      userId: createDto.userId,
+    });
   }
 
   findAll() {

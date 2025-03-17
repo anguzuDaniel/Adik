@@ -155,19 +155,16 @@ input CreateMessagesInput {
 }
 
 input CreateJournalInput {
-  id: Int!
-  user: String!
   content: String!
   sentimentScore: Float!
   createdAt: DateTime!
 }
 
 input UpdateJournalInput {
-  id: Int!
-  user: String
   content: String
   sentimentScore: Float
   createdAt: DateTime
+  id: Int!
 }
 
 input CreateReportInput {

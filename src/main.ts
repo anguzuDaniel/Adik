@@ -10,7 +10,11 @@ import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors(); // Enable CORS for all routes
+  app.enableCors({
+    origin: '*', // Allow all origins (adjust for production)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   app.use(graphqlUploadExpress({ maxFileSize: 100000, maxFiles: 10 }));
 
   // Swagger Configuration
@@ -26,11 +30,13 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
 
+
   // Dynamically construct the URL
-  const url = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://localhost:${port}/graphql`;
+  const url = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://0.0.0.0:${port}/graphql`;
   console.log('Server started at:', url);
   console.log(`Swagger docs available at: ${url}/docs`);
 
-  await app.listen(port);
+  // Bind to all network interfaces
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
