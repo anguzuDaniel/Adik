@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role.js';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 import { RecoveryStage } from '../enums/RecoveryStage.js';
 
 @ObjectType()
@@ -13,39 +13,31 @@ export class Users {
   }
 
   @PrimaryColumn('uuid')
+  @Field()
   id: string;
 
   @Field()
   @Column()
+  @IsString()
+  @MinLength(3)
   username: string;
 
   @Field()
   @Column({ unique: true })
+  @IsEmail()
   email: string;
 
   @Field()
   @Column({
-    type: 'enum',
-    enum: Role,
+    type: 'varchar',
     default: Role.USER,
   })
   role: Role;
 
   @Field()
   @Column({
-    type: 'enum',
-    enum: RecoveryStage,
+    type: 'varchar',
     default: RecoveryStage.PRE_CONTEMPLATION,
   })
   recoveryStage: RecoveryStage;
-
-  @Field()
-  @Column()
-  supabaseUserId: string;
-
-  @Field()
-  @IsString()
-  @MinLength(1)
-  @Column()
-  password: string;
 }

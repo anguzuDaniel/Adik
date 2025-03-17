@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateUsersInput } from './dto/update-users.input.js';
-import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../entities/users.entity.js';
 import { CreateUsersInput } from './dto/create-users.input.js';
+import { Role } from '../enums/Role.js';
+import { RecoveryStage } from '../enums/RecoveryStage.js';
 
 @Injectable()
 export class UsersService {
@@ -22,10 +23,8 @@ export class UsersService {
       throw new Error('User with this email already exists');
     }
 
-    const hashPassword = await bcrypt.hash(createUserInput.password, 10);
     const user = this.usersRepository.create({
       ...createUserInput,
-      password: hashPassword,
     });
     return this.usersRepository.save(user);
   }
@@ -36,18 +35,6 @@ export class UsersService {
 
   async findOne(id: string) {
     return this.usersRepository.findOneBy({ id });
-  }
-
-  async findOneByUserName(username: string): Promise<Users | null> {
-    return this.usersRepository.findOne({
-      where: { username },
-    });
-  }
-
-  async findOneByEmail(email: string): Promise<Users | null> {
-    return this.usersRepository.findOne({
-      where: { email },
-    });
   }
 
   async update(id: string, updateUserInput: UpdateUsersInput) {
@@ -65,5 +52,36 @@ export class UsersService {
 
   async remove(id: string) {
     return this.usersRepository.delete({ id });
+  }
+
+  async findOrCreateFromSupabase(supabaseUser: {
+    id: string;
+    email: string;
+    metadata: any;
+  }): Promise<Users> {
+    let user = await this.usersRepository.findOneBy({
+      id: supabaseUser.id
+    });
+
+    if (!user) {
+      user = this.usersRepository.create({
+        id: supabaseUser.id,
+        email: supabaseUser.email,
+        username: supabaseUser.metadata?.username || supabaseUser.email.split('@')[0],
+        role: Role.USER,
+        recoveryStage: RecoveryStage.PRE_CONTEMPLATION,
+      });
+
+      await this.usersRepository.save(user);
+    }
+
+    return user;
+  }
+
+  async findBySupabaseId(supabaseId: string): Promise<Users | null> {
+    return this.usersRepository.findOne({
+      where: { id: supabaseId },
+      cache: true
+    });
   }
 }

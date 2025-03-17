@@ -15,9 +15,5 @@ export class UpdateUsersInput extends PartialType(CreateUsersInput) {
 
   @ApiProperty()
   @Field({ nullable: true })
-  password?: string;
-
-  @ApiProperty()
-  @Field({ nullable: true })
   role?: Role;
 }

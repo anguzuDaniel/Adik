@@ -3,12 +3,11 @@
 # ------------------------------------------------------
 
 type Users {
+  id: String!
   username: String!
   email: String!
   role: String!
   recoveryStage: String!
-  supabaseUserId: String!
-  password: String!
 }
 
 type AuthPayload {
@@ -95,7 +94,7 @@ type Mutation {
   createUser(createUserInput: CreateUsersInput!): Users!
   updateUser(updateUserInput: UpdateUsersInput!): Users!
   removeUser(id: String!): Users!
-  signUp(input: CreateUsersInput!): AuthPayload!
+  signUp(input: SignInInput!): AuthPayload!
   signIn(input: SignInInput!): AuthPayload!
   createMessage(createMessageInput: CreateMessagesInput!): Messages!
   getMessageBetweenUsers(receiverId: String!): [Messages!]!
@@ -120,7 +119,6 @@ input CreateUsersInput {
   email: String!
   role: Role!
   recoveryStage: RecoveryStage!
-  password: String!
 }
 
 enum RecoveryStage {
@@ -136,7 +134,6 @@ input UpdateUsersInput {
   email: String
   role: String
   recoveryStage: RecoveryStage
-  password: String
   id: String!
 }
 

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -8,11 +9,10 @@ import { Role } from '../enums/Role.js';
 import { AuthJwtPayload } from './types/auth-jwt-payload.js';
 import { SignInInput } from './dto/signInInput.js';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { AuthPayload } from './entities/auth-payload.js';
 import * as process from 'node:process';
-import { CreateUsersInput } from '../users/dto/create-users.input.js';
 import { Users } from '../entities/users.entity.js';
 
 @Injectable()
@@ -28,10 +28,26 @@ export class AuthService {
       process.env.SUPABASE_URL as string,
       process.env.SUPABASE_KEY as string,
     );
-    console.log('Supabase client initialized:', this.supabase); // Debugging log
+    console.log('Supabase client initialized:', this.supabase);
   }
 
-  async registerUser({ username, email, role, password }: CreateUsersInput) {
+  async registerUser({ email, password }: SignInInput): Promise<{
+    userId: string;
+    username?: string;
+    email: string;
+    role: Role;
+    accessToken: string;
+    message: string;
+    expiresAt: number
+  }> {
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      throw new BadRequestException('Invalid email format');
+    }
+
+    if (password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters');
+    }
+
     const { data, error } = await this.supabase.auth.signUp({
       phone: '',
       email,
@@ -43,44 +59,70 @@ export class AuthService {
     });
 
     if (error) {
-      throw new ConflictException('User with this email may already exist');
+      const errorMessage = error.message.includes('already registered')
+        ? 'Email already in use'
+        : error.message;
+      throw new ConflictException(errorMessage);
     }
 
-    const { error: insertError } = await this.supabase.from('users').insert({
-      id: data.user?.id,
-      username,
-      email,
-      password,
-      role: role,
-      supabaseUserId: data.user?.id,
-    });
+    const baseUsername = data.user?.email?.split('@')[0]?.replace(/[^a-zA-Z0-9_]/g, '_') || 'user';
+    let username = baseUsername;
+    let counter = 1;
 
-    if (insertError) {
-      throw new Error(
-        `Failed to insert user into users table: ${insertError.message}`,
-      );
+    while (true) {
+      const { error: existsError } = await this.supabase
+        .from('users')
+        .select()
+        .eq('username', username);
+
+      if (!existsError) break;
+      username = `${baseUsername}${counter}`;
+      counter++;
     }
 
-    const fullUser = await this.userRepo.findOneBy({
-      email: email.toLocaleLowerCase(),
-    });
+    try {
+      const { error: insertError } = await this.supabase.from('users').insert({
+        id: data.user?.id,
+        email: data.user?.email,
+        username,
+      });
 
-    if (!fullUser) {
-      throw new Error('User not found after creation');
+      if (insertError) {
+        await this.supabase.auth.admin.deleteUser(data.user?.id!);
+        throw new Error(`Failed to insert user: ${insertError.message}`);
+      }
+
+      const fullUser = await this.userRepo.findOneBy({
+        email: email.toLocaleLowerCase(),
+      });
+
+      if (!fullUser) {
+        await this.supabase.auth.admin.deleteUser(data.user?.id!);
+        throw new Error('User not found after creation');
+      }
+
+      const supabaseUser: User = {
+        id: fullUser.id.toString(),
+        email: fullUser.email,
+        app_metadata: data.user?.app_metadata || {},
+        user_metadata: data.user?.user_metadata || {},
+        aud: 'authenticated',
+        created_at: data.user?.created_at || new Date().toISOString(),
+      };
+
+      const authPayload = this.login(supabaseUser);
+      return {
+        ...authPayload,
+        accessToken: data.session?.access_token || '',
+        expiresAt: data.session?.expires_at || 0
+      };
+
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new ConflictException('Database constraint violated');
+      }
+      throw error;
     }
-
-    const supabaseUser: User = {
-      id: fullUser.supabaseUserId.toString(),
-      email: fullUser.email,
-      app_metadata: {}, // Empty object or default data
-      user_metadata: {}, // Empty object or default data
-      aud: 'authenticated', // Assuming 'authenticated' is the default audience
-      created_at: new Date().toISOString(), // Add a default creation date
-    };
-
-    const authPayload = this.login(supabaseUser);
-    console.log('AuthPayload being returned:', authPayload);
-    return authPayload;
   }
 
   async validateLocalUser({ email, password }: SignInInput) {

@@ -7,80 +7,83 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import * as process from 'node:process';
 import { AuthService } from './auth.service.js';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class SupabaseStrategy extends PassportStrategy(
   SupabaseAuthStrategy,
   'supabase',
 ) {
-  public constructor(private readonly authService: AuthService) {
+  public constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {
     super({
       supabaseUrl: process.env.SUPABASE_URL as string,
       supabaseKey: process.env.SUPABASE_JWT_SECRET as string,
-      supabaseOptions: {},
       extractor: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      supabaseOptions: {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: false,
+        },
+      },
     });
   }
 
   async validate(payload: any): Promise<any> {
-    console.log('Decoded payload:', payload);
-
-    if (!payload || !payload.sub) {
-      throw new UnauthorizedException('Invalid token or missing userId');
-    }
-
     const supabase = this.authService.getClient();
 
-    const { data: user, error } = await supabase.auth.admin.getUserById(
-      String(payload.sub),
-    );
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.admin.getUserById(String(payload.sub));
 
     if (error || !user) {
       throw new UnauthorizedException('User not found');
     }
 
-    console.log('Authenticated user:', user);
-
-    return user;
+    return await this.usersService.findOrCreateFromSupabase({
+      id: user.id,
+      email: user.email!,
+      metadata: user.user_metadata,
+    });
   }
 
   async authenticate(
     req: e.Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
   ) {
-    if (!req.headers.authorization) {
-      return this.fail('No authorization header found', 401);
-    }
+    const supabase = this.authService.getClient();
 
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+    const token = this.extractTokenFromHeader(req);
 
     if (!token) {
-      return this.fail('No authorization header found', 401);
+      return this.fail({ message: 'Authorization header missing' }, 401);
     }
 
     try {
-      const supabase = this.authService.getClient();
-
-      if (!supabase || !supabase.auth) {
-        return this.fail('Internal server error', 500);
-      }
-
-      // Use getUser for token validation
-      const { data: user, error } = await supabase.auth.getUser(token);
+      const { data: { user }, error } = await supabase.auth.getUser(token);
 
       if (error || !user) {
-        console.error('Error authenticating user:', error);
-        return this.fail('Invalid token or user not found', 401);
+        return this.fail({ message: 'Invalid token' }, 401);
       }
 
-      console.log('User:', user);
-      console.error('Error:', error);
+      const localUser = await this.usersService.findBySupabaseId(user.id);
 
-      req.user = user;
+      if (!localUser) {
+        return this.fail({ message: 'User not registered' }, 401);
+      }
 
-      this.success(user, 200);
+      this.success(localUser, 200);
     } catch (error) {
-      console.error('Error during authentication process:', error);
-      return this.fail('Authentication failed', 500);
+      this.error(error);
     }
+  }
+
+  private extractTokenFromHeader(
+    req: e.Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+  ): string | undefined {
+    const [type, token] = req.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

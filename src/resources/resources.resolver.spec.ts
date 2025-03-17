@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResourcesResolver } from './resources.resolver';
-import { ResourcesService } from './resources.service';
+import { ResourcesResolver } from './resources.resolver.js';
+import { ResourcesService } from './resources.service.js';
 
 describe('ResourcesResolver', () => {
   let resolver: ResourcesResolver;

@@ -23,7 +23,6 @@
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLipCheck": true,
     "typeRoots": ["node_modules/@types", "./types"]
   }
 }

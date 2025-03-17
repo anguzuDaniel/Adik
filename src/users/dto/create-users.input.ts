@@ -26,10 +26,4 @@ export class CreateUsersInput {
   @IsEnum(Role)
   @Field(() => RecoveryStage)
   recoveryStage: RecoveryStage;
-
-  @ApiProperty()
-  @Field()
-  @IsString()
-  @MinLength(3)
-  password: string;
 }

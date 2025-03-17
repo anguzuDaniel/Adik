@@ -7,7 +7,6 @@ import { GqlAuthGuard } from './dto/gql-auth.guard.js';
 import { SupabaseAuthUser } from 'nestjs-supabase-auth';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/current-user.decorator.js';
-import { CreateUsersInput } from '../users/dto/create-users.input.js';
 
 @Resolver()
 export class AuthResolver {
@@ -21,7 +20,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthPayload)
   signUp(
-    @Args({ name: 'input' }) input: CreateUsersInput,
+    @Args({ name: 'input' }) input: SignInInput,
   ): Promise<AuthPayload> {
     return this.authService.registerUser(input);
   }
