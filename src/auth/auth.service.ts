@@ -47,6 +47,7 @@ export class AuthService {
     }
 
     const { error: insertError } = await this.supabase.from('users').insert({
+      id: data.user?.id,
       username,
       email,
       password,

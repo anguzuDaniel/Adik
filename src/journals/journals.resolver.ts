@@ -7,7 +7,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/dto/gql-auth.guard.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
-import { User } from '@supabase/supabase-js';
+import { Users } from '../entities/users.entity.js';
 
 @Resolver(() => Journal)
 export class JournalsResolver {
@@ -18,7 +18,7 @@ export class JournalsResolver {
   @UseGuards(GqlAuthGuard)
   createJournal(
     @Args('createJournalInput') createJournalInput: CreateJournalInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: Users
   ) {
     return this.journalsService.create({
       ...createJournalInput,

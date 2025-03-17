@@ -34,7 +34,7 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.usersRepository.findOneBy({ id });
   }
 
@@ -50,7 +50,7 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserInput: UpdateUsersInput) {
+  async update(id: string, updateUserInput: UpdateUsersInput) {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
@@ -63,7 +63,7 @@ export class UsersService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return this.usersRepository.delete({ id });
   }
 }

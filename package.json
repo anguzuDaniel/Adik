@@ -18,7 +18,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node ./node_modules/typeorm/cli -d ./src/data-source.ts",
+    "typeorm:generate-migration": "npm run typeorm migration:generate -- -n",
+    "typeorm:run-migrations": "npm run typeorm migration:run",
+    "typeorm:revert-migration": "npm run typeorm migration:revert"
   },
   "dependencies": {
     "16": "^0.0.2",
@@ -74,7 +78,7 @@
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.13.10",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",

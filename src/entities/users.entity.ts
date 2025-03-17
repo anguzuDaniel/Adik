@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, PrimaryColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role.js';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { IsString, MinLength } from 'class-validator';
 import { RecoveryStage } from '../enums/RecoveryStage.js';
 
@@ -12,9 +12,8 @@ export class Users {
     Object.assign(this, partial);
   }
 
-  @Field(() => Int)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn('uuid')
+  id: string;
 
   @Field()
   @Column()

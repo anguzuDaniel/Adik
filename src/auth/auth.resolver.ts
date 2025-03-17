@@ -9,9 +9,6 @@ import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/current-user.decorator.js';
 import { CreateUsersInput } from '../users/dto/create-users.input.js';
 
-/**
- * Write comments
- */
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service.js';
 import { CreateUsersInput } from './dto/create-users.input.js';
 import { UpdateUsersInput } from './dto/update-users.input.js';
@@ -28,7 +28,7 @@ export class UsersResolver {
   @Query(() => Users, { name: 'user' })
   @ApiOperation({ summary: 'Find one users' })
   @UseGuards(GqlAuthGuard)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -42,7 +42,7 @@ export class UsersResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Users)
   @ApiOperation({ summary: 'Remove users' })
-  removeUser(@Args('id', { type: () => Int }) id: number) {
+  removeUser(@Args('id', { type: () => String }) id: string) {
     return this.userService.remove(id);
   }
 }

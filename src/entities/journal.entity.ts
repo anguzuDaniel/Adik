@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn, Entity, JoinColumn,
@@ -6,29 +6,30 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Users } from './users.entity.js';
-import { User } from '@supabase/supabase-js';
 
 @ObjectType()
 @Entity()
 export class Journal {
   @PrimaryGeneratedColumn()
+  @Field(() => Int)
   id: number;
 
   @Column('text')
+  @Field()
   content: string;
 
   @Column('float', { nullable: true })
+  @Field({ nullable: true })
   sentimentScore?: number;
 
   @CreateDateColumn()
+  @Field()
   createdAt: Date;
-  
+
   @ManyToOne(() => Users)
   @JoinColumn({ name: 'user_id' })
-  @Field(() => Users)
   user: Users;
 
   @Column({ name: 'user_id', type: 'uuid' })
-  @Field(() => ID)
   userId: string;
 }

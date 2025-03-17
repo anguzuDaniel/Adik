@@ -1,13 +1,13 @@
 import { CreateUsersInput } from './create-users.input.js';
-import { InputType, Field, PartialType, Int } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../enums/Role.js';
 
 @InputType()
 export class UpdateUsersInput extends PartialType(CreateUsersInput) {
   @ApiProperty()
-  @Field(() => Int)
-  id: number;
+  @Field(() => String)
+  id: string;
 
   @ApiProperty()
   @Field({ nullable: true })
