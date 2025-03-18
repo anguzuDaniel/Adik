@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJournalInput } from './dto/create-journal.input.js';
 import { UpdateJournalInput } from './dto/update-journal.input.js';
 import { Repository } from 'typeorm';
@@ -22,35 +22,64 @@ export class JournalsService {
     return this.journalRepository.find();
   }
 
-  findOne(id: number) {
+  async findOne(id: string) { // Changed to string
     if (!id) {
-      throw new Error('Please provide an id');
+      throw new BadRequestException('ID is required');
     }
 
-    return this.journalRepository.find({ where: { id } });
-  }
-
-  update(id: number, updateJournalInput: UpdateJournalInput) {
-    if (id) {
-      throw new Error('Please provide an id');
-    }
-
-    const journal = this.journalRepository.findOne({ where: { id } });
+    const journal = await this.journalRepository.findOne({
+      where: { id }, // Now string type
+      relations: ['user'] // Changed from 'users' to 'user'
+    });
 
     if (!journal) {
-      throw new Error('Journal not found');
+      throw new NotFoundException(`Journal with ID ${id} not found`);
     }
 
-    return this.journalRepository.update(id, updateJournalInput);
+    return journal;
   }
 
-  async remove(id: number) {
+  async findAllByUserId(userId: string) { // Changed to string
+    if (!userId) {
+      throw new BadRequestException('User ID is required');
+    }
+
+    const journals = await this.journalRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user']
+    });
+
+    if (!journals.length) {
+      throw new NotFoundException(`No journals found for user ${userId}`);
+    }
+
+    return journals;
+  }
+
+  async update(id: string, updateJournalInput: UpdateJournalInput) { // Changed to string
+    if (!id) {
+      throw new BadRequestException('ID is required');
+    }
+
+    const journal = await this.journalRepository.preload({
+      id,
+      ...updateJournalInput
+    });
+
+    if (!journal) {
+      throw new NotFoundException(`Journal with ID ${id} not found`);
+    }
+
+    return this.journalRepository.save(journal);
+  }
+
+  async remove(id: string) { // Changed to string
     const journal = await this.journalRepository.findOne({ where: { id } });
-
     if (!journal) {
-      throw new Error('Journal not found');
+      throw new NotFoundException(`Journal with ID ${id} not found`);
     }
 
-    return this.journalRepository.remove(journal);
+    await this.journalRepository.remove(journal);
+    return { ...journal, id };
   }
 }

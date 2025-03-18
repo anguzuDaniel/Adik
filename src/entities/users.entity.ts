@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role.js';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { RecoveryStage } from '../enums/RecoveryStage.js';
 
@@ -13,7 +13,7 @@ export class Users {
   }
 
   @PrimaryColumn('uuid')
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { JournalsService } from './journals.service.js';
 import { Journal } from '../entities/journal.entity.js';
 import { CreateJournalInput } from './dto/create-journal.input.js';
@@ -36,26 +36,34 @@ export class JournalsResolver {
   @Query(() => Journal, { name: 'journal' })
   @ApiOperation({ summary: 'Find a journal by id.' })
   @UseGuards(GqlAuthGuard)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.journalsService.findOne(id);
+  }
+
+  @Query(() => [Journal], { name: 'getJournalByUserId' })
+  @ApiOperation({ summary: 'Find a journal by id.' })
+  @UseGuards(GqlAuthGuard)
+  getJournalByUserId(@Args('userId', { type: () => ID }) userId: string) {
+    return this.journalsService.findAllByUserId(userId);
   }
 
   @Mutation(() => Journal)
   @ApiOperation({ summary: 'Update a journal.' })
   @UseGuards(GqlAuthGuard)
   updateJournal(
+    @Args('id', { type: () => String }) id: string,
     @Args('updateJournalInput') updateJournalInput: UpdateJournalInput,
   ) {
     return this.journalsService.update(
-      updateJournalInput.id,
-      updateJournalInput,
+      id,
+      updateJournalInput
     );
   }
 
   @Mutation(() => Journal)
   @ApiOperation({ summary: 'Remove a journal.' })
   @UseGuards(GqlAuthGuard)
-  removeJournal(@Args('id', { type: () => Int }) id: number) {
+  removeJournal(@Args('id', { type: () => String }) id: string) {
     return this.journalsService.remove(id);
   }
 }

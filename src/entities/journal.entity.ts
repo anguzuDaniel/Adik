@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn, Entity, JoinColumn,
@@ -10,11 +10,11 @@ import { Users } from './users.entity.js';
 @ObjectType()
 @Entity()
 export class Journal {
-  @PrimaryGeneratedColumn()
-  @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => ID)
+  id: string;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   @Field()
   content: string;
 
@@ -27,6 +27,7 @@ export class Journal {
   createdAt: Date;
 
   @ManyToOne(() => Users)
+  @Field(() => Users)
   @JoinColumn({ name: 'user_id' })
   user: Users;
 

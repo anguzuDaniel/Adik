@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type Users {
-  id: String!
+  id: ID!
   username: String!
   email: String!
   role: String!
@@ -44,10 +44,11 @@ type DeleteMessagesResponse {
 }
 
 type Journal {
-  id: Int!
+  id: ID!
   content: String!
   sentimentScore: Float
   createdAt: DateTime!
+  user: Users!
 }
 
 type Report {
@@ -81,7 +82,8 @@ type Query {
   user(id: String!): Users!
   viewer: Users!
   journals: [Journal!]!
-  journal(id: Int!): Journal!
+  journal(id: String!): Journal!
+  getJournalByUserId(userId: ID!): [Journal!]!
   reports: [Report!]!
   report(id: Int!): Report!
   matches: [Match!]!
@@ -100,8 +102,8 @@ type Mutation {
   getMessageBetweenUsers(receiverId: String!): [Messages!]!
   deleteMessage(messageId: Float!): DeleteMessagesResponse!
   createJournal(createJournalInput: CreateJournalInput!): Journal!
-  updateJournal(updateJournalInput: UpdateJournalInput!): Journal!
-  removeJournal(id: Int!): Journal!
+  updateJournal(id: String!, updateJournalInput: UpdateJournalInput!): Journal!
+  removeJournal(id: String!): Journal!
   createReport(createReportInput: CreateReportInput!): Report!
   updateReport(updateReportInput: UpdateReportInput!): Report!
   removeReport(id: Int!): Report!
@@ -157,7 +159,6 @@ input CreateJournalInput {
 input UpdateJournalInput {
   content: String
   sentimentScore: Float
-  id: Int!
 }
 
 input CreateReportInput {
