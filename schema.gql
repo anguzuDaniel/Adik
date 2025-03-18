@@ -81,6 +81,7 @@ type UploadFileResponse {
 type Query {
   user(id: String!): Users!
   viewer: Users!
+  getMessageBetweenUsers(receiverId: String!): [Messages!]!
   journals: [Journal!]!
   journal(id: String!): Journal!
   getJournalByUserId(userId: ID!): [Journal!]!
@@ -99,7 +100,6 @@ type Mutation {
   signUp(input: SignInInput!): AuthPayload!
   signIn(input: SignInInput!): AuthPayload!
   sendMessage(createMessageInput: CreateMessagesInput!): Messages!
-  getMessageBetweenUsers(receiverId: String!): [Messages!]!
   deleteMessage(messageId: String!): DeleteMessagesResponse!
   createJournal(createJournalInput: CreateJournalInput!): Journal!
   updateJournal(id: String!, updateJournalInput: UpdateJournalInput!): Journal!

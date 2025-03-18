@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { MessagesService } from './messages.service.js';
 import { CreateMessagesInput } from './dto/create-messages.input.js';
 import { Messages } from '../entities/messages.entity.js';
@@ -35,13 +35,13 @@ export class MessagesResolver {
     }
   }
 
-  @Mutation(() => [Messages])
+  @Query(() => [Messages])
   @UseGuards(GqlAuthGuard)
   getMessageBetweenUsers(
-    @Args('receiverId') receiverId: string,
+    @Args('receiverId', { type: () => String }) receiverId: string,
     @CurrentUser() user: any,
   ): Promise<Messages[]> {
-    const senderId = user.user.id;
+    const senderId = user.id;
     return this.messageService.getMessageBetweenUsers(senderId, receiverId);
   }
 
