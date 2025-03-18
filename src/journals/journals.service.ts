@@ -68,7 +68,6 @@ export class JournalsService {
   }
 
   async update(id: string, updateJournalInput: UpdateJournalInput) {
-    // Changed to string
     if (!id) {
       throw new BadRequestException('ID is required');
     }
