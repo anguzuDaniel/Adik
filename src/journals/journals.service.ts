@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateJournalInput } from './dto/create-journal.input.js';
 import { UpdateJournalInput } from './dto/update-journal.input.js';
 import { Repository } from 'typeorm';
@@ -22,14 +27,14 @@ export class JournalsService {
     return this.journalRepository.find();
   }
 
-  async findOne(id: string) { // Changed to string
+  async findOne(id: string) {
     if (!id) {
       throw new BadRequestException('ID is required');
     }
 
     const journal = await this.journalRepository.findOne({
-      where: { id }, // Now string type
-      relations: ['user'] // Changed from 'users' to 'user'
+      where: { id },
+      relations: ['user']
     });
 
     if (!journal) {
@@ -39,7 +44,7 @@ export class JournalsService {
     return journal;
   }
 
-  async findAllByUserId(userId: string) { // Changed to string
+  async findAllByUserId(userId: string) {
     if (!userId) {
       throw new BadRequestException('User ID is required');
     }
@@ -73,13 +78,18 @@ export class JournalsService {
     return this.journalRepository.save(journal);
   }
 
-  async remove(id: string) { // Changed to string
+  async remove(id: string) {
     const journal = await this.journalRepository.findOne({ where: { id } });
+
     if (!journal) {
       throw new NotFoundException(`Journal with ID ${id} not found`);
     }
 
-    await this.journalRepository.remove(journal);
-    return { ...journal, id };
+    try {
+      await this.journalRepository.remove(journal);
+      return { message: `Journal with ID ${id} removed successfully` };
+    } catch (error) {
+      throw new InternalServerErrorException(`Error removing journal with ID ${id}: ${error.message}`);
+    }
   }
 }

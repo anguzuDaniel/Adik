@@ -60,7 +60,7 @@ export class JournalsResolver {
     );
   }
 
-  @Mutation(() => Journal)
+  @Mutation(() => Journal, { name: 'removeJournal' })
   @ApiOperation({ summary: 'Remove a journal.' })
   @UseGuards(GqlAuthGuard)
   removeJournal(@Args('id', { type: () => String }) id: string) {
