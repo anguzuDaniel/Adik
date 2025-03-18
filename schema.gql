@@ -25,11 +25,11 @@ enum Role {
 }
 
 type Messages {
-  id: Int!
+  id: ID!
   senderId: String!
   receiverId: String!
   content: String!
-  parentId: Float
+  parentId: String
   timestamp: DateTime!
 }
 
@@ -98,9 +98,9 @@ type Mutation {
   removeUser(id: String!): Users!
   signUp(input: SignInInput!): AuthPayload!
   signIn(input: SignInInput!): AuthPayload!
-  createMessage(createMessageInput: CreateMessagesInput!): Messages!
+  sendMessage(createMessageInput: CreateMessagesInput!): Messages!
   getMessageBetweenUsers(receiverId: String!): [Messages!]!
-  deleteMessage(messageId: Float!): DeleteMessagesResponse!
+  deleteMessage(messageId: String!): DeleteMessagesResponse!
   createJournal(createJournalInput: CreateJournalInput!): Journal!
   updateJournal(id: String!, updateJournalInput: UpdateJournalInput!): Journal!
   removeJournal(id: String!): Journal!
@@ -147,7 +147,7 @@ input SignInInput {
 input CreateMessagesInput {
   content: String!
   senderId: String!
-  parentId: Float
+  parentId: String
   receiverId: String!
 }
 

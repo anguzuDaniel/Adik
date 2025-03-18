@@ -17,10 +17,12 @@ export class MessagesGateway {
     data: { senderId: string; receiverId: string; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const message = await this.messagesService.sendMessage(
-      data.senderId,
-      data.receiverId,
-      data.content,
+    const message = await this.messagesService.sendMessage({
+        userId: data.senderId,
+        receiverId: data.receiverId,
+        content: data.content,
+      },
+      data.senderId
     );
 
     client.broadcast.emit(`receiveMessage-${data.receiverId}`, message);

@@ -3,7 +3,11 @@ import { MessagesService } from './messages.service.js';
 import { CreateMessagesInput } from './dto/create-messages.input.js';
 import { Messages } from '../entities/messages.entity.js';
 import { GqlAuthGuard } from '../auth/dto/gql-auth.guard.js';
-import { UseGuards } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  Logger,
+  UseGuards,
+} from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { DeleteMessagesResponse } from './dto/delete-messages.response.js';
 
@@ -13,20 +17,22 @@ export class MessagesResolver {
 
   @Mutation(() => Messages)
   @UseGuards(GqlAuthGuard)
-  createMessage(
-    @Args('createMessageInput') createMessageInput: CreateMessagesInput,
+  async sendMessage(
+    @Args('createMessageInput') input: CreateMessagesInput,
     @CurrentUser() user: any,
   ) {
-    console.log('User', user.user?.id);
-    console.log('User id', createMessageInput.senderId);
-
-    return this.messageService.sendMessage(
-      createMessageInput.senderId,
-      createMessageInput.receiverId,
-      createMessageInput.content,
-      createMessageInput.parentId,
-      user.user.id,
-    );
+    try {
+      return await this.messageService.sendMessage(
+        {
+          receiverId: input.receiverId,
+          content: input.content,
+          parentId: input.parentId
+        },
+        user.id
+      );
+    } catch (error) {
+      throw new InternalServerErrorException('Message sending failed', error.message);
+    }
   }
 
   @Mutation(() => [Messages])
@@ -41,7 +47,7 @@ export class MessagesResolver {
 
   @Mutation(() => DeleteMessagesResponse)
   @UseGuards(GqlAuthGuard)
-  deleteMessage(@Args('messageId') messageId: number) {
+  deleteMessage(@Args('messageId') messageId: string) {
     return this.messageService.deleteMessageById(messageId);
   }
 }

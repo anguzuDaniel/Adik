@@ -15,10 +15,9 @@ export class CreateMessagesInput {
   @Field(() => String)
   senderId: string;
 
-  // Replying to message
   @Field({ nullable: true })
   @Column({ nullable: true })
-  parentId?: number;
+  parentId?: string;
 
   @ApiProperty()
   @IsString()

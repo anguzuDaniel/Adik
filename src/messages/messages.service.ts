@@ -1,5 +1,5 @@
 import {
-  Injectable,
+  Injectable, InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -17,32 +17,47 @@ export class MessagesService {
   ) {}
 
   async sendMessage(
-    senderId: string,
-    receiverId: string,
-    content: string,
-    parentId?: number,
-    userId?: string,
+    messageData: {
+      receiverId: string,
+      content: string,
+      parentId?: string,
+      userId?: string
+    },
+    authenticatedUserId: string
   ): Promise<Messages> {
-    if (userId !== senderId.toString()) {
-      throw new UnauthorizedException('You can only send message as yourself.');
+    if (messageData.parentId) {
+      const parentExists = await this.messageRepository.existsBy({
+        id: messageData.parentId
+      });
+      if (!parentExists) {
+        throw new NotFoundException('Parent message not found');
+      }
     }
 
-    const encryptedContent = encryptMessage(content);
+    let encryptedContent: string;
+    try {
+      encryptedContent = encryptMessage(messageData.content);
+    } catch (error) {
+      throw new InternalServerErrorException('Message encryption failed');
+    }
 
-    const message = this.messageRepository.create({
-      senderId,
-      receiverId,
-      content: encryptedContent,
-      parentId,
-    });
+    try {
+      const message = this.messageRepository.create({
+        ...messageData,
+        content: encryptedContent,
+        senderId: authenticatedUserId
+      });
 
-    return await this.messageRepository.save(message);
+      return await this.messageRepository.save(message);
+    } catch (dbError) {
+      throw new InternalServerErrorException('Failed to send message');
+    }
   }
 
   /**
    * Find a message by ID (decrypt content after retrieving).
    */
-  async findOne(id: number): Promise<Messages | null> {
+  async findOne(id: string): Promise<Messages | null> {
     const message = await this.messageRepository.findOne({ where: { id } });
     if (message) {
       message.content = decryptMessage(message.content);
@@ -77,7 +92,7 @@ export class MessagesService {
     }
   }
 
-  async deleteMessageById(messageId: number): Promise<DeleteMessagesResponse> {
+  async deleteMessageById(messageId: string): Promise<DeleteMessagesResponse> {
     if (!messageId) {
       throw new UnauthorizedException('Message not found');
     }
