@@ -47,7 +47,7 @@ export class MessagesResolver {
 
   @Mutation(() => DeleteMessagesResponse)
   @UseGuards(GqlAuthGuard)
-  deleteMessage(@Args('messageId') messageId: string) {
-    return this.messageService.deleteMessageById(messageId);
+  deleteMessage(@Args('id', { type: () => String }) id: string) {
+    return this.messageService.deleteMessageById(id);
   }
 }
