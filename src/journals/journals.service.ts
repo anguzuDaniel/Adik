@@ -34,7 +34,7 @@ export class JournalsService {
 
     const journal = await this.journalRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user'],
     });
 
     if (!journal) {
@@ -49,26 +49,33 @@ export class JournalsService {
       throw new BadRequestException('User ID is required');
     }
 
-    const journals = await this.journalRepository.find({
-      where: { user: { id: userId } },
-      relations: ['user']
-    });
+    try {
+      const journals = await this.journalRepository.find({
+        where: { user: { id: userId } },
+        relations: ['user'],
+      });
 
-    if (!journals.length) {
-      throw new NotFoundException(`No journals found for user ${userId}`);
+      if (journals.length === 0) {
+        throw new NotFoundException(`No journals found for user ${userId}`);
+      }
+
+      return journals;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error retrieving journals for user ${userId}: ${error.message}`
+      );
     }
-
-    return journals;
   }
 
-  async update(id: string, updateJournalInput: UpdateJournalInput) { // Changed to string
+  async update(id: string, updateJournalInput: UpdateJournalInput) {
+    // Changed to string
     if (!id) {
       throw new BadRequestException('ID is required');
     }
 
     const journal = await this.journalRepository.preload({
       id,
-      ...updateJournalInput
+      ...updateJournalInput,
     });
 
     if (!journal) {
@@ -89,7 +96,9 @@ export class JournalsService {
       await this.journalRepository.remove(journal);
       return { message: `Journal with ID ${id} removed successfully` };
     } catch (error) {
-      throw new InternalServerErrorException(`Error removing journal with ID ${id}: ${error.message}`);
+      throw new InternalServerErrorException(
+        `Error removing journal with ID ${id}: ${error.message}`,
+      );
     }
   }
 }
