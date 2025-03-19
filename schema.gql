@@ -78,6 +78,20 @@ type UploadFileResponse {
   result: String!
 }
 
+type Community {
+  id: ID!
+  name: String!
+  isActive: Boolean!
+  memberNumber: Int!
+  description: String!
+  rating: Float!
+  groupTags: [String!]!
+  adminId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  members: [Users!]!
+}
+
 type Query {
   user(id: String!): Users!
   viewer: Users!
@@ -91,6 +105,8 @@ type Query {
   match(id: Int!): Match!
   resources: [Resource!]!
   resource(id: Int!): Resource!
+  communities: [Community!]!
+  community(id: String!): Community!
 }
 
 type Mutation {
@@ -114,6 +130,9 @@ type Mutation {
   updateResource(updateResourceInput: UpdateResourceInput!): Resource!
   removeResource(id: Int!): Resource!
   uploadFile(file: Upload!, bucket: String): UploadFileResponse!
+  createCommunity(createCommunityInput: CreateCommunityInput!): Community!
+  updateCommunity(id: String!, updateCommunityInput: UpdateCommunityInput!): Community!
+  removeCommunity(adminId: String!, id: String!): Community!
 }
 
 input CreateUsersInput {
@@ -210,3 +229,23 @@ input UpdateResourceInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input CreateCommunityInput {
+  name: String!
+  description: String
+  adminId: String!
+  groupTags: [String!]!
+  rating: Float!
+  isActive: Boolean!
+  memberNumber: Int!
+}
+
+input UpdateCommunityInput {
+  name: String
+  description: String
+  adminId: String
+  groupTags: [String!]
+  rating: Float
+  isActive: Boolean
+  memberNumber: Int
+}

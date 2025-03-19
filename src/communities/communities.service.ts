@@ -11,8 +11,14 @@ export class CommunitiesService {
     @InjectRepository(Community) private communityRepo: Repository<Community>
   ) {}
 
-  create(createCommunityInput: CreateCommunityInput) {
-    return this.communityRepo.create(createCommunityInput);
+   async create(createCommunityInput: CreateCommunityInput) {
+    const community = await this.communityRepo.findOneByOrFail({ name: createCommunityInput.name })
+
+    if (community) {
+      throw new BadRequestException(`Community with name ${createCommunityInput.name} already exists`)
+    }
+
+    return this.communityRepo.save(createCommunityInput);
   }
 
   findAll() {
@@ -47,11 +53,17 @@ export class CommunitiesService {
     }));
   }
 
-  async remove(id: string) {
-    const community = await this.communityRepo.findOneByOrFail({ id });
+  async remove(adminId: string, id: string) {
+    const community = await this.communityRepo.findOne({
+      where: { id },
+    });
 
     if (!community) {
       throw new NotFoundException(`Community with ID ${id} not found`);
+    }
+
+    if (!community.adminId || adminId !== community.adminId) {
+      throw new BadRequestException('Only the admin can delete the community');
     }
 
     try {

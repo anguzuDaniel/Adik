@@ -41,6 +41,10 @@ export class Community {
   @Field(() => [String])
   groupTags: string[];
 
+  @Column()
+  @Field()
+  adminId: string;
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;

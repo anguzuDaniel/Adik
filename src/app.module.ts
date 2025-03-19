@@ -15,7 +15,7 @@ import { MatchesModule } from './matches/matches.module.js';
 import { ResourcesModule } from './resources/resources.module.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { CommunitiesModule } from './communities/communities.module';
+import { CommunitiesModule } from './communities/communities.module.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

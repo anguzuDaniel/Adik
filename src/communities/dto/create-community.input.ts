@@ -8,6 +8,9 @@ export class CreateCommunityInput {
   @Field({ nullable: true })
   description?: string;
 
+  @Field()
+  adminId: string;
+
   @Field(() => [String])
   groupTags: string[];
 
