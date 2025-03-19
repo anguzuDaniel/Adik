@@ -1,8 +1,5 @@
-import { CreateCommunityInput } from './create-community.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateCommunityInput } from './create-community.input.js';
+import { InputType, Field, Int, PartialType, ID } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateCommunityInput extends PartialType(CreateCommunityInput) {
-  @Field(() => Int)
-  id: number;
-}
+export class UpdateCommunityInput extends PartialType(CreateCommunityInput) {}

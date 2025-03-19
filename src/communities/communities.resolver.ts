@@ -1,8 +1,8 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { CommunitiesService } from './communities.service';
-import { Community } from './entities/community.entity';
-import { CreateCommunityInput } from './dto/create-community.input';
-import { UpdateCommunityInput } from './dto/update-community.input';
+import { CommunitiesService } from './communities.service.js';
+import { Community } from '../entities/community.entity.js';
+import { CreateCommunityInput } from './dto/create-community.input.js';
+import { UpdateCommunityInput } from './dto/update-community.input.js';
 
 @Resolver(() => Community)
 export class CommunitiesResolver {
@@ -19,17 +19,20 @@ export class CommunitiesResolver {
   }
 
   @Query(() => Community, { name: 'community' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.communitiesService.findOne(id);
   }
 
   @Mutation(() => Community)
-  updateCommunity(@Args('updateCommunityInput') updateCommunityInput: UpdateCommunityInput) {
-    return this.communitiesService.update(updateCommunityInput.id, updateCommunityInput);
+  updateCommunity(
+    @Args('id') id: string,
+    @Args('updateCommunityInput') updateCommunityInput: UpdateCommunityInput
+  ) {
+    return this.communitiesService.update(id, updateCommunityInput);
   }
 
   @Mutation(() => Community)
-  removeCommunity(@Args('id', { type: () => Int }) id: number) {
+  removeCommunity(@Args('id', { type: () => String }) id: string) {
     return this.communitiesService.remove(id);
   }
 }

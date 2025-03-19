@@ -1,7 +1,22 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, Float } from '@nestjs/graphql';
 
 @InputType()
 export class CreateCommunityInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field()
+  name: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field(() => [String])
+  groupTags: string[];
+
+  @Field(() => Float)
+  rating: number;
+
+  @Field(() => Boolean)
+  isActive: boolean;
+
+  @Field(() => Int)
+  memberNumber: number;
 }
