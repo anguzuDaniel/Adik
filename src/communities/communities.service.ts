@@ -1,78 +1,139 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException, Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCommunityInput } from './dto/create-community.input.js';
 import { UpdateCommunityInput } from './dto/update-community.input.js';
 import { Repository } from 'typeorm';
 import { Community } from '../entities/community.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class CommunitiesService {
   constructor(
-    @InjectRepository(Community) private communityRepo: Repository<Community>
+    @InjectRepository(Community) private communityRepo: Repository<Community>,
+    private readonly usersService: UsersService
   ) {}
 
-   async create(createCommunityInput: CreateCommunityInput) {
-    const community = await this.communityRepo.findOneByOrFail({ name: createCommunityInput.name })
-
-    if (community) {
-      throw new BadRequestException(`Community with name ${createCommunityInput.name} already exists`)
+  async create(
+    userId: string,
+    createCommunityInput: CreateCommunityInput
+  ): Promise<Community> {
+    const creator = await this.usersService.findOne(userId);
+    if (!creator) {
+      throw new BadRequestException('User not found');
     }
 
-    return this.communityRepo.save(createCommunityInput);
+    const existingCommunity = await this.communityRepo.findOneBy({
+      name: createCommunityInput.name
+    });
+    if (existingCommunity) {
+      throw new ConflictException(
+        `Community '${createCommunityInput.name}' already exists`
+      );
+    }
+
+    const newCommunity = this.communityRepo.create({
+      ...createCommunityInput,
+      adminId: userId,
+      members: [creator],
+      memberNumber: 1
+    });
+
+    try {
+      return await this.communityRepo.save(newCommunity);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create community');
+    }
   }
 
   findAll() {
-    return this.communityRepo.find();
-  }
-
-  findOne(id: string) {
-    if (!id) {
-      throw new BadRequestException('Invalid community ID format');
-    }
-
-    return this.communityRepo.findOne({ where: { id } });
-  }
-
-  async update(id: string, updateCommunityInput: UpdateCommunityInput) {
-    if (!id) {
-      throw new BadRequestException('Invalid community ID format');
-    }
-
-    const updatedCommunity = await this.communityRepo.preload({
-      id,
-      ...updateCommunityInput,
+    return this.communityRepo.find({
+      relations: ['members']
     });
-
-    if (!updatedCommunity) {
-      throw new NotFoundException(`Community with ID ${id} not found`);
-    }
-
-    return this.communityRepo.save(updatedCommunity).then((savedCommunity) => ({
-      message: `Community with ID ${id} updated successfully`,
-      community: savedCommunity,
-    }));
   }
 
-  async remove(adminId: string, id: string) {
+  async findOne(id: string) {
+    if (!id) {
+      throw new BadRequestException('Invalid community ID');
+    }
+
     const community = await this.communityRepo.findOne({
       where: { id },
+      relations: ['members']
     });
 
     if (!community) {
-      throw new NotFoundException(`Community with ID ${id} not found`);
+      throw new NotFoundException(`Community ${id} not found`);
+    }
+    return community;
+  }
+
+  async update(id: string, adminId: string, updateInput: UpdateCommunityInput) {
+    const community = await this.findOne(id);
+
+    if (community.adminId !== adminId) {
+      throw new BadRequestException('Only the community admin can update the community');
     }
 
-    if (!community.adminId || adminId !== community.adminId) {
-      throw new BadRequestException('Only the admin can delete the community');
+    const updated = this.communityRepo.merge(community, updateInput);
+
+    try {
+      return await this.communityRepo.save(updated);
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to update community: ${error.message}`);
+    }
+  }
+
+  async remove(adminId: string, communityId: string) {
+    const community = await this.findOne(communityId);
+
+    if (community.adminId !== adminId) {
+      throw new BadRequestException('Only community admin can delete');
     }
 
     try {
       await this.communityRepo.remove(community);
-      return { message: `Community with ID ${id} removed successfully` };
+      return { message: `Community ${communityId} deleted successfully` };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Error removing community with ID ${id}: ${error.message}`,
-      );
+      throw new InternalServerErrorException('Failed to delete community');
     }
+  }
+
+  async addMember(communityId: string, userId: string): Promise<Community> {
+    const [community, user] = await Promise.all([
+      this.findOne(communityId),
+      this.usersService.findOne(userId)
+    ]);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (community.members.some(m => m.id === userId)) {
+      throw new ConflictException('User already in community');
+    }
+
+    community.members.push(user);
+    community.memberNumber = community.members.length;
+
+    return this.communityRepo.save(community);
+  }
+
+  async removeMember(communityId: string, userId: string): Promise<Community> {
+    const community = await this.findOne(communityId);
+
+    const initialCount = community.members.length;
+    community.members = community.members.filter(m => m.id !== userId);
+
+    if (community.members.length === initialCount) {
+      throw new NotFoundException('User not in community');
+    }
+
+    community.memberNumber = community.members.length;
+    return this.communityRepo.save(community);
   }
 }

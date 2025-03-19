@@ -1,4 +1,5 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import { Column } from 'typeorm';
 
 @InputType()
 export class CreateCommunityInput {
@@ -7,9 +8,6 @@ export class CreateCommunityInput {
 
   @Field({ nullable: true })
   description?: string;
-
-  @Field()
-  adminId: string;
 
   @Field(() => [String])
   groupTags: string[];

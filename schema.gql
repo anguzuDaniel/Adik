@@ -131,8 +131,10 @@ type Mutation {
   removeResource(id: Int!): Resource!
   uploadFile(file: Upload!, bucket: String): UploadFileResponse!
   createCommunity(createCommunityInput: CreateCommunityInput!): Community!
-  updateCommunity(id: String!, updateCommunityInput: UpdateCommunityInput!): Community!
+  updateCommunity(adminId: String!, id: String!, updateCommunityInput: UpdateCommunityInput!): Community!
   removeCommunity(adminId: String!, id: String!): Community!
+  joinCommunity(communityId: String!): Community!
+  leaveCommunity(communityId: String!): Community!
 }
 
 input CreateUsersInput {
@@ -233,7 +235,6 @@ scalar Upload
 input CreateCommunityInput {
   name: String!
   description: String
-  adminId: String!
   groupTags: [String!]!
   rating: Float!
   isActive: Boolean!
@@ -243,7 +244,6 @@ input CreateCommunityInput {
 input UpdateCommunityInput {
   name: String
   description: String
-  adminId: String
   groupTags: [String!]
   rating: Float
   isActive: Boolean
