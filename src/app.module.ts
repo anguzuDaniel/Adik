@@ -35,7 +35,7 @@ const __dirname = dirname(__filename);
         url: configService.get<string>('SUPABASE_DATABASE_URL'),
         password: configService.get<string>('SUPABASE_DATABASE_PASSWORD'),
         username: configService.get<string>('SUPABASE_DATABASE_USERNAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
         autoLoadEntities: true,
         synchronize: true, // Warning: Set to false in production
       }),

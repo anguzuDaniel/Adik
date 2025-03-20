@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { MatchesService } from './matches.service.js';
-import { Match } from './entities/match.entity.js';
+import { Match } from '../entities/match.entity.js';
 import { CreateMatchInput } from './dto/create-match.input.js';
 import { UpdateMatchInput } from './dto/update-match.input.js';
 

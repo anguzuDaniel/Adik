@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { ResourceType } from '../../enums/ResourceType.js';
+import { ResourceType } from '../enums/ResourceType.js';
 
 @ObjectType()
 @Entity()

@@ -1,13 +1,13 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ReportsService } from './reports.service.js';
-import { Report } from '../entities/report.entity.js';
+import { Report } from '../entities/index.js';
 import { CreateReportInput } from './dto/create-report.input.js';
-import { ReportType } from 'src/enums/ReportType.js';
+import { ReportType } from '../enums/ReportType.js';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { User } from '@supabase/supabase-js';
 import { ReportStatus } from '../enums/ReportStatus.js';
-import { GqlAuthGuard } from 'src/auth/dto/gql-auth.guard.js';
+import { GqlAuthGuard } from '../auth/dto/gql-auth.guard.js';
 
 @Resolver(() => Report)
 export class ReportsResolver {
@@ -31,13 +31,13 @@ export class ReportsResolver {
   }
 
   @Query(() => Report, { name: 'report' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.reportsService.findOne(id);
   }
 
   @Mutation(() => Report)
   updateReport(
-    @Args('id') id: number,
+    @Args('id', { type: () => String }) id: string,
     @Args('status') status: ReportStatus
   ) {
     return this.reportsService.updateStatus(id, status);
@@ -50,7 +50,7 @@ export class ReportsResolver {
   }
 
   @Mutation(() => Report)
-  removeReport(@Args('id', { type: () => Int }) id: number) {
+  removeReport(@Args('id', { type: () => String }) id: string) {
     return this.reportsService.remove(id);
   }
 }

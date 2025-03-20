@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -7,31 +7,53 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ReportStatus } from '../enums/ReportStatus.js';
-import { Community } from './community.entity.js';
-import { Users } from './users.entity.js';
 import { ReportType } from '../enums/ReportType.js';
+import { Users } from './users.entity.js';
+import { Community } from './community.entity.js';
+import { forwardRef } from '@nestjs/common';
 
 @ObjectType()
 @Entity()
 export class Report {
-  @Field(() => Int)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @ManyToOne(() => forwardRef(() => Users) as unknown as typeof Users,
+    {
+      nullable: true,
+    }
+  )
+  @Field(() => forwardRef(() => Users), { nullable: true })
+  reportedUser?: any;
+
+  @ManyToOne(() => forwardRef(() => Community) as unknown as typeof Community, {
+    nullable: true,
+  })
+  @Field(() => forwardRef(() => Community), { nullable: true })
+  reportedCommunity?: Community;
+
+  @ManyToOne(
+    () => forwardRef(() => Users) as unknown as typeof Users,
+    (user) => user.reports,
+  )
+  @Field(() => forwardRef(() => Users))
+  reporter: any;
 
   @Field(() => ReportType)
   @Column({ type: 'enum', enum: ReportType })
   type: ReportType;
 
   @Field()
-  @Column()
+  @Column('uuid')
   reporterId: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   reportedUserId?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   reportedCommunityId?: string;
 
   @Field()
@@ -49,16 +71,4 @@ export class Report {
   @Field()
   @CreateDateColumn()
   createdAt: Date;
-
-  @ManyToOne(() => Users, { nullable: true })
-  @Field(() => Users, { nullable: true })
-  reportedUser?: Users;
-
-  @ManyToOne(() => Community, { nullable: true })
-  @Field(() => Community, { nullable: true })
-  reportedCommunity?: Community;
-
-  @ManyToOne(() => Users)
-  @Field(() => Users)
-  reporter: Users;
 }

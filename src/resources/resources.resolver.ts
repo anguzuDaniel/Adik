@@ -4,7 +4,7 @@ import { CreateResourceInput } from './dto/create-resource.input.js';
 import { UpdateResourceInput } from './dto/update-resource.input.js';
 import { UploadFileResponse } from './dto/upload-file-reponse.dto.js';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
-import { Resource } from './entities/resource.entity.js';
+import { Resource } from '../entities/resource.entity.js';
 import { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 @Resolver(() => Resource)

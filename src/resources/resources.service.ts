@@ -7,7 +7,7 @@ import { CreateResourceInput } from './dto/create-resource.input.js';
 import { UpdateResourceInput } from './dto/update-resource.input.js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Resource } from './entities/resource.entity.js';
+import { Resource } from '../entities/resource.entity.js';
 import { Repository } from 'typeorm';
 import { UploadFileResponse } from './dto/upload-file-reponse.dto.js';
 import { ConfigService } from '@nestjs/config';

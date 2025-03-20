@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMatchInput } from './dto/create-match.input.js';
 import { UpdateMatchInput } from './dto/update-match.input.js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Match } from './entities/match.entity.js';
+import { Match } from '../entities/match.entity.js';
 import { Repository } from 'typeorm';
 
 @Injectable()

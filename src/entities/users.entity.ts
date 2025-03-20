@@ -1,8 +1,10 @@
-import { Column, Entity, PrimaryColumn, Unique } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Role } from '../enums/Role.js';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { RecoveryStage } from '../enums/RecoveryStage.js';
+import { Report } from './index.js';
+import { forwardRef } from '@nestjs/common';
 
 @ObjectType()
 @Entity()
@@ -12,7 +14,7 @@ export class Users {
     Object.assign(this, partial);
   }
 
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
 
@@ -40,4 +42,8 @@ export class Users {
     default: RecoveryStage.PRE_CONTEMPLATION,
   })
   recoveryStage: RecoveryStage;
+
+  @OneToMany(() => forwardRef(() => Report) as unknown as typeof Report, (report) => report.reporter)
+  @Field(() => [forwardRef(() => Report)])
+  reports: any[];
 }

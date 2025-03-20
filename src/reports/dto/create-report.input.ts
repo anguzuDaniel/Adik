@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { ReportType } from 'src/enums/ReportType.js';
+import { ReportType } from '../../enums/ReportType.js';
 
 @InputType()
 export class CreateReportInput {

@@ -7,7 +7,7 @@ import {
 import { CreateReportInput } from './dto/create-report.input.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Report } from '../entities/report.entity.js';
+import { Report } from '../entities/index.js';
 import { UsersService } from '../users/users.service.js';
 import { CommunitiesService } from '../communities/communities.service.js';
 import { ReportStatus } from '../enums/ReportStatus.js';
@@ -68,7 +68,7 @@ export class ReportsService {
     return this.reportRepository.save(report);
   }
 
-  async updateStatus(id: number, status: ReportStatus): Promise<Report> {
+  async updateStatus(id: string, status: ReportStatus): Promise<Report> {
     const report = await this.reportRepository.findOneBy({ id });
     if (!report) {
       throw new NotFoundException(`Report ${id} not found`);
@@ -82,7 +82,7 @@ export class ReportsService {
     return this.reportRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     if (!id) {
       throw new UnauthorizedException('You need to provide and Id.');
     }
@@ -96,7 +96,7 @@ export class ReportsService {
     return report;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     if (!id) {
       throw new UnauthorizedException('You need to provide an Id.');
     }
