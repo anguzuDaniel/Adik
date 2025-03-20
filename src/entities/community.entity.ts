@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int, Float, ID } from '@nestjs/graphql';
 import {
   Column,
-  CreateDateColumn,
+  CreateDateColumn, DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -52,6 +52,10 @@ export class Community {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  @Field({ nullable: true })
+  deletedAt?: Date;
 
   @ManyToMany(() => Users)
   @JoinTable()

@@ -89,6 +89,7 @@ type Community {
   adminId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  deletedAt: DateTime
   members: [Users!]!
 }
 

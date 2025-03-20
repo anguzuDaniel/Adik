@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { Community } from '../entities/community.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/users.service.js';
+import { DeleteCommunityResponse } from './dto/deletion-response.type.js';
 
 @Injectable()
 export class CommunitiesService {
@@ -88,7 +89,7 @@ export class CommunitiesService {
     }
   }
 
-  async remove(adminId: string, communityId: string) {
+  async remove(adminId: string, communityId: string): Promise<DeleteCommunityResponse> {
     const community = await this.findOne(communityId);
 
     if (community.adminId !== adminId) {
@@ -97,7 +98,11 @@ export class CommunitiesService {
 
     try {
       await this.communityRepo.remove(community);
-      return { message: `Community ${communityId} deleted successfully` };
+      return {
+        message: `Community ${communityId} deleted successfully`,
+        success: true,
+        communityId
+      };
     } catch (error) {
       throw new InternalServerErrorException('Failed to delete community');
     }
