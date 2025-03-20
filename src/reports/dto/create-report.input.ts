@@ -1,29 +1,17 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
-import { ReportStatus } from '../../enums/ReportStatus.js';
+import { InputType, Field } from '@nestjs/graphql';
+import { ReportType } from 'src/enums/ReportType.js';
 
 @InputType()
 export class CreateReportInput {
-  @ApiProperty()
-  @Field(() => Int)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @Field(() => ReportType)
+  type: ReportType;
 
-  @ApiProperty()
-  @Field()
-  @Column()
-  reporterId: string;
+  @Field({ nullable: true })
+  reportedUserId?: string;
 
-  @ApiProperty()
-  @Column()
-  reportedUserId: string;
+  @Field({ nullable: true })
+  reportedCommunityId?: string;
 
-  @ApiProperty()
   @Field()
   reason: string;
-
-  @ApiProperty()
-  @Field(() => ReportStatus)
-  status: ReportStatus;
 }
