@@ -42,8 +42,4 @@ export class Users {
     default: RecoveryStage.PRE_CONTEMPLATION,
   })
   recoveryStage: RecoveryStage;
-
-  @OneToMany(() => forwardRef(() => Report) as unknown as typeof Report, (report) => report.reporter)
-  @Field(() => [forwardRef(() => Report)])
-  reports: any[];
 }

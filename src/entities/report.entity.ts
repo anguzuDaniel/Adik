@@ -19,26 +19,14 @@ export class Report {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => forwardRef(() => Users) as unknown as typeof Users,
-    {
-      nullable: true,
-    }
-  )
-  @Field(() => forwardRef(() => Users), { nullable: true })
+  // Use string-based references for relationships
+  @ManyToOne('Users', { nullable: true })
+  @Field(() => Users, { nullable: true })
   reportedUser?: any;
 
-  @ManyToOne(() => forwardRef(() => Community) as unknown as typeof Community, {
-    nullable: true,
-  })
-  @Field(() => forwardRef(() => Community), { nullable: true })
-  reportedCommunity?: Community;
-
-  @ManyToOne(
-    () => forwardRef(() => Users) as unknown as typeof Users,
-    (user) => user.reports,
-  )
-  @Field(() => forwardRef(() => Users))
-  reporter: any;
+  @ManyToOne('Community', { nullable: true })
+  @Field(() => Community, { nullable: true })
+  reportedCommunity?: any;
 
   @Field(() => ReportType)
   @Column({ type: 'enum', enum: ReportType })
