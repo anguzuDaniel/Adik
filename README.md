@@ -287,7 +287,7 @@ For questions or feedback, feel free to reach out:
 
 - **Daniel Anguzu**  
   GitHub: [anguzuDaniel](https://github.com/anguzuDaniel)  
-  Email: [anguzud7@example.com](mailto:your-email@example.com)
+  Email: [anguzudaniel1@gmail.com](mailto:your-email@example.com)
 
 ---
 
