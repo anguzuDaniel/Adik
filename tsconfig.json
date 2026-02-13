@@ -8,7 +8,9 @@
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "target": "ES2021",
-    "lib": ["ES2021"],
+    "lib": [
+      "ES2021"
+    ],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -23,6 +25,14 @@
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "typeRoots": ["node_modules/@types", "./types"]
-  }
+    "typeRoots": [
+      "node_modules/@types",
+      "./types"
+    ]
+  },
+  "exclude": [
+    "frontend",
+    "node_modules",
+    "dist"
+  ]
 }
