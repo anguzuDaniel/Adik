@@ -18,7 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <QueryProvider>{children}</QueryProvider>
+        import {AuthProvider} from "@/context/AuthContext";
+
+        // ... inside RootLayout return ...
+        <QueryProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

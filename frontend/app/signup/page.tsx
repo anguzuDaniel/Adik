@@ -3,23 +3,44 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
+import { useMutation } from "@tanstack/react-query";
+import { graphQLClient } from "@/lib/fetcher";
+import { SIGNUP_MUTATION } from "@/lib/graphql/mutations";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
-    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+
+    const { mutate, isPending, error } = useMutation({
+        mutationFn: async () => {
+            // Note: Schema only accepts email and password for signUp currently.
+            // Names are ignored in this call but collected for future use.
+            return graphQLClient.request<any>(SIGNUP_MUTATION, {
+                input: { email, password }
+            });
+        },
+        onSuccess: (data) => {
+            console.log("Signup success:", data);
+            login(data.signUp.accessToken, data.signUp);
+        },
+        onError: (err: any) => {
+            console.error("Signup failed:", err);
+        }
+    });
 
     const handleSignup = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        // Simulate signup
-        setTimeout(() => {
-            setLoading(false);
-            // router.push("/onboarding");
-        }, 1500);
+        mutate();
     };
 
     return (
@@ -48,26 +69,67 @@ export default function SignupPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSignup} className="space-y-4">
+                            {error && (
+                                <div className="p-3 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-md">
+                                    {(error as Error).message || "Signup failed"}
+                                </div>
+                            )}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label htmlFor="first-name" className="text-sm font-medium leading-none text-zinc-200">First name</label>
-                                    <Input id="first-name" placeholder="John" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                    <Label htmlFor="first-name" className="text-zinc-200">First name</Label>
+                                    <Input
+                                        id="first-name"
+                                        placeholder="John"
+                                        required
+                                        className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                    />
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="last-name" className="text-sm font-medium leading-none text-zinc-200">Last name</label>
-                                    <Input id="last-name" placeholder="Doe" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                    <Label htmlFor="last-name" className="text-zinc-200">Last name</Label>
+                                    <Input
+                                        id="last-name"
+                                        placeholder="Doe"
+                                        required
+                                        className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium leading-none text-zinc-200">Email</label>
-                                <Input id="email" placeholder="name@example.com" type="email" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                <Label htmlFor="email" className="text-zinc-200">Email</Label>
+                                <Input
+                                    id="email"
+                                    placeholder="name@example.com"
+                                    type="email"
+                                    required
+                                    className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="password" className="text-sm font-medium leading-none text-zinc-200">Password</label>
-                                <Input id="password" type="password" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                <Label htmlFor="password" className="text-zinc-200">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                             </div>
-                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20" disabled={loading}>
-                                {loading ? "Creating account..." : "Create account"}
+                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20" disabled={isPending}>
+                                {isPending ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Creating account...
+                                    </>
+                                ) : (
+                                    "Create account"
+                                )}
                             </Button>
                         </form>
                     </CardContent>

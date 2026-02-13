@@ -3,30 +3,45 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label"; // Check if this exists, if not use standard label
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation"; // Handled by AuthContext
 import { Logo } from "@/components/Logo";
-
-// Since we haven't verified if Label exists, I'll inline a simple label if needed, 
-// but assuming standard shadcn has it. I'll stick to basic HTML label if unsure, 
-// but for premium look let's try to use standard Tailwind classes.
+import { useMutation } from "@tanstack/react-query";
+import { graphQLClient } from "@/lib/fetcher";
+import { SIGNIN_MUTATION } from "@/lib/graphql/mutations";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner"; // Assuming sonner is installed or uses generic alert for now. 
+// If sonner not installed, I'll use simple window.alert or console.error for MVP
+// Actually, earlier context showed "Toaster" might be available. I'll stick to basic error handling for now.
 
 export default function LoginPage() {
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const { mutate, isPending, error } = useMutation({
+        mutationFn: async () => {
+            return graphQLClient.request<any>(SIGNIN_MUTATION, {
+                input: { email, password }
+            });
+        },
+        onSuccess: (data) => {
+            console.log("Login success:", data);
+            login(data.signIn.accessToken, data.signIn);
+        },
+        onError: (err: any) => {
+            console.error("Login failed:", err);
+            // alert("Login failed: " + err.message);
+        }
+    });
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        // Simulate login
-        setTimeout(() => {
-            setLoading(false);
-            router.push("/dashboard");
-        }, 1500);
+        mutate();
     };
 
     return (
@@ -47,7 +62,9 @@ export default function LoginPage() {
 
                 <Card className="premium-card border-white/10 bg-zinc-950/50">
                     <CardHeader className="space-y-1 flex flex-col items-center text-center">
-                        <Logo className="w-12 h-12 mb-4 rounded-2xl" iconClassName="w-6 h-6" />
+                        <div className="mb-4">
+                            <Logo iconClassName="w-10 h-10" />
+                        </div>
                         <CardTitle className="text-2xl font-bold tracking-tight text-white">Welcome back</CardTitle>
                         <CardDescription className="text-zinc-400">
                             Enter your credentials to access your account
@@ -55,19 +72,46 @@ export default function LoginPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-4">
+                            {error && (
+                                <div className="p-3 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-md">
+                                    {(error as Error).message || "Invalid credentials"}
+                                </div>
+                            )}
                             <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">Email</label>
-                                <Input id="email" placeholder="name@example.com" type="email" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                <Label htmlFor="email" className="text-zinc-200">Email</Label>
+                                <Input
+                                    id="email"
+                                    placeholder="name@example.com"
+                                    type="email"
+                                    required
+                                    className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">Password</label>
+                                    <Label htmlFor="password" className="text-zinc-200">Password</Label>
                                     <Link href="#" className="text-sm text-blue-400 hover:text-blue-300">Forgot password?</Link>
                                 </div>
-                                <Input id="password" type="password" required className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white" />
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    className="bg-zinc-900/50 border-white/10 focus-visible:ring-blue-500 text-white"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                             </div>
-                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20" disabled={loading}>
-                                {loading ? "Signing in..." : "Sign in"}
+                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20" disabled={isPending}>
+                                {isPending ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    "Sign in"
+                                )}
                             </Button>
                         </form>
                     </CardContent>
