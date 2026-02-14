@@ -26,6 +26,7 @@ const __dirname = dirname(__filename);
       envFilePath: ['.env.local', '.env'],
       load: [dbConfig],
       isGlobal: true,
+      ignoreEnvFile: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
