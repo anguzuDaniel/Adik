@@ -1,49 +1,31 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MessageSquare, Heart, Share2, MoreHorizontal } from "lucide-react";
+import { MessageSquare, Heart, Share2, Users, Loader2, Star, Tag } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "@/lib/fetcher";
+import { GET_COMMUNITIES_QUERY } from "@/lib/graphql/queries";
+import { useAuth } from "@/context/AuthContext";
 
-const posts = [
-    {
-        id: 1,
-        author: "Sarah J.",
-        avatar: "bg-pink-500",
-        time: "2h ago",
-        content: "Just celebrated 30 days of mindfulness! It hasn't been easy, but using the journaling tools here has really helped me stay grounded.",
-        likes: 24,
-        comments: 5,
-        tag: "Milestone",
-        tagColor: "text-purple-400 bg-purple-400/10",
-    },
-    {
-        id: 2,
-        author: "Mike T.",
-        avatar: "bg-blue-500",
-        time: "4h ago",
-        content: "Does anyone have recommendations for dealing with social anxiety at work? I have a presentation coming up and I'm feeling overwhelmed.",
-        likes: 15,
-        comments: 12,
-        tag: "Question",
-        tagColor: "text-blue-400 bg-blue-400/10",
-    },
-    {
-        id: 3,
-        author: "Alex R.",
-        avatar: "bg-emerald-500",
-        time: "6h ago",
-        content: "Found this great article about sleep hygiene. Sharing it here because it really made a difference for me this week.",
-        likes: 32,
-        comments: 3,
-        tag: "Resource",
-        tagColor: "text-emerald-400 bg-emerald-400/10",
-    },
+const avatarColors = [
+    "bg-pink-500", "bg-blue-500", "bg-emerald-500", "bg-purple-500",
+    "bg-amber-500", "bg-cyan-500", "bg-rose-500", "bg-indigo-500",
 ];
 
 export default function CommunityPage() {
+    const { user } = useAuth();
+
+    const { data, isLoading } = useQuery({
+        queryKey: ["communities"],
+        queryFn: fetcher<{ communities: any[] }>(GET_COMMUNITIES_QUERY),
+        enabled: !!user?.id,
+    });
+
+    const communities = data?.communities ?? [];
+
     return (
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center space-y-2">
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
@@ -51,96 +33,101 @@ export default function CommunityPage() {
                     className="text-3xl font-bold text-white relative inline-block"
                 >
                     Community
-                    <span className="absolute -top-1 -right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    {communities.length > 0 && (
+                        <span className="absolute -top-1 -right-3 text-xs font-normal px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+                            {communities.length}
+                        </span>
+                    )}
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="text-zinc-400"
                 >
-                    Connect, share, and grow with others.
+                    Connect, share, and grow with others on their recovery journey.
                 </motion.p>
             </div>
 
-            {/* Post Input */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-            >
-                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex gap-4 backdrop-blur-sm">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex-shrink-0" />
-                    <div className="flex-1">
-                        <input
-                            type="text"
-                            placeholder="Share your thoughts..."
-                            className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-zinc-500 text-lg"
-                        />
-                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
-                            <div className="flex gap-2">
-                                {/* Formatting icons could go here */}
-                            </div>
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6">
-                                Post
-                            </Button>
-                        </div>
-                    </div>
+            {isLoading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 className="h-8 w-8 text-zinc-500 animate-spin" />
                 </div>
-            </motion.div>
-
-            {/* Posts Feed */}
-            <div className="space-y-4">
-                {posts.map((post, index) => (
-                    <motion.div
-                        key={post.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 + 0.2 }}
-                    >
-                        <Card className="premium-card border-white/5 bg-zinc-900/30">
-                            <CardContent className="p-6">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full ${post.avatar} flex items-center justify-center text-white font-bold`}>
-                                            {post.author[0]}
+            ) : communities.length === 0 ? (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center justify-center py-20 text-zinc-500"
+                >
+                    <Users className="h-16 w-16 mb-4 opacity-30" />
+                    <p className="text-lg font-medium">No communities yet</p>
+                    <p className="text-sm mt-1">Communities will appear here once they&apos;re created</p>
+                </motion.div>
+            ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                    {communities.map((community: any, index: number) => (
+                        <motion.div
+                            key={community.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.08 }}
+                        >
+                            <Card className="premium-card border-white/5 bg-zinc-900/30 hover:border-blue-500/20 transition-all group">
+                                <CardContent className="p-6 space-y-4">
+                                    {/* Header */}
+                                    <div className="flex items-start gap-4">
+                                        <div className={`w-12 h-12 rounded-xl ${avatarColors[index % avatarColors.length]} flex items-center justify-center text-white font-bold text-lg shrink-0`}>
+                                            {community.name?.[0]?.toUpperCase() || "C"}
                                         </div>
-                                        <div>
-                                            <h3 className="font-semibold text-white">{post.author}</h3>
-                                            <p className="text-xs text-zinc-500">{post.time}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-white text-lg group-hover:text-blue-400 transition-colors truncate">
+                                                {community.name}
+                                            </h3>
+                                            <p className="text-sm text-zinc-500 line-clamp-2 mt-1">
+                                                {community.description}
+                                            </p>
                                         </div>
                                     </div>
-                                    <Button variant="ghost" size="icon" className="text-zinc-500 hover:text-white">
-                                        <MoreHorizontal className="w-4 h-4" />
-                                    </Button>
-                                </div>
 
-                                <div className="mb-4">
-                                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mb-2 ${post.tagColor}`}>
-                                        {post.tag}
-                                    </span>
-                                    <p className="text-zinc-300 leading-relaxed">
-                                        {post.content}
-                                    </p>
-                                </div>
+                                    {/* Tags */}
+                                    {community.groupTags?.length > 0 && (
+                                        <div className="flex flex-wrap gap-2">
+                                            {community.groupTags.slice(0, 3).map((tag: string) => (
+                                                <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-white/5 text-zinc-400">
+                                                    <Tag className="w-3 h-3" />
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                            {community.groupTags.length > 3 && (
+                                                <span className="text-xs text-zinc-500">+{community.groupTags.length - 3} more</span>
+                                            )}
+                                        </div>
+                                    )}
 
-                                <div className="flex items-center gap-6 pt-4 border-t border-white/5 text-zinc-500">
-                                    <button className="flex items-center gap-2 hover:text-red-400 transition-colors group">
-                                        <Heart className="w-4 h-4 group-hover:fill-red-400" />
-                                        <span className="text-sm">{post.likes}</span>
-                                    </button>
-                                    <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-                                        <MessageSquare className="w-4 h-4" />
-                                        <span className="text-sm">{post.comments}</span>
-                                    </button>
-                                    <button className="flex items-center gap-2 hover:text-white transition-colors ml-auto">
-                                        <Share2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                ))}
-            </div>
+                                    {/* Stats */}
+                                    <div className="flex items-center gap-6 pt-3 border-t border-white/5 text-zinc-500">
+                                        <div className="flex items-center gap-2">
+                                            <Users className="w-4 h-4" />
+                                            <span className="text-sm">{community.memberNumber} members</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <Star className="w-4 h-4 text-amber-400/70" />
+                                            <span className="text-sm">{community.rating?.toFixed(1) || "—"}</span>
+                                        </div>
+                                        <div className="ml-auto">
+                                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${community.isActive
+                                                    ? "bg-emerald-400/10 text-emerald-400"
+                                                    : "bg-zinc-700/50 text-zinc-500"
+                                                }`}>
+                                                {community.isActive ? "Active" : "Inactive"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

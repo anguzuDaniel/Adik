@@ -14,9 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { graphQLClient } from "@/lib/fetcher";
 import { SIGNIN_MUTATION } from "@/lib/graphql/mutations";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "sonner"; // Assuming sonner is installed or uses generic alert for now. 
-// If sonner not installed, I'll use simple window.alert or console.error for MVP
-// Actually, earlier context showed "Toaster" might be available. I'll stick to basic error handling for now.
+import { getErrorMessage } from "@/lib/utils";
 
 export default function LoginPage() {
     const { login } = useAuth();
@@ -74,7 +72,7 @@ export default function LoginPage() {
                         <form onSubmit={handleLogin} className="space-y-4">
                             {error && (
                                 <div className="p-3 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-md">
-                                    {(error as Error).message || "Invalid credentials"}
+                                    {getErrorMessage(error)}
                                 </div>
                             )}
                             <div className="space-y-2">

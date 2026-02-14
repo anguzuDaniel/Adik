@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ME_QUERY } from "@/lib/graphql/queries";
 import { fetcher } from "@/lib/fetcher";
 
@@ -32,56 +32,68 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
+    const [initialized, setInitialized] = useState(false);
     const router = useRouter();
+    const queryClient = useQueryClient();
 
-    // Load token from local storage on mount
+    // Load token from local storage on mount — single time
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
             setToken(storedToken);
         }
+        setInitialized(true);
     }, []);
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["me", token],
+        queryKey: ["me"],
         queryFn: fetcher<{ viewer: User }>(ME_QUERY),
-        enabled: !!token, // Only run query if token exists
-        retry: false, // Don't retry if token is invalid
+        enabled: !!token,
+        retry: false,
+        // User profile rarely changes — keep it fresh for 10 minutes
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 
-    const login = (newToken: string, userData?: any) => {
-        localStorage.setItem("token", newToken);
-        setToken(newToken);
-        if (userData) {
-            // Optimistically set user data if provided (e.g. from login response)
-            // queryClient.setQueryData(["me", newToken], { viewer: userData });
-        }
-        router.push("/dashboard");
-    };
-
-    const logout = () => {
+    const logout = useCallback(() => {
         localStorage.removeItem("token");
         setToken(null);
+        // Clear all cached queries on logout
+        queryClient.clear();
         router.push("/login");
-    };
+    }, [queryClient, router]);
 
-    // If error (e.g. 401), logout
+    const login = useCallback((newToken: string, userData?: any) => {
+        localStorage.setItem("token", newToken);
+        setToken(newToken);
+        // Optimistically set user data if provided — avoids waiting for ME_QUERY
+        if (userData) {
+            queryClient.setQueryData(["me"], { viewer: userData });
+        } else {
+            // Invalidate stale ME_QUERY so it refetches with the new token
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+        }
+        router.push("/dashboard");
+    }, [queryClient, router]);
+
+    // If error (e.g. 401), logout — but only after initialization
     useEffect(() => {
-        if (error) {
+        if (initialized && error) {
+            console.error("[AuthContext] ME_QUERY error, triggering logout:", error);
             logout();
         }
-    }, [error]);
+    }, [error, initialized, logout]);
+
+    const value = useMemo(() => ({
+        user: data?.viewer || null,
+        loading: !initialized || (isLoading && !!token),
+        login,
+        logout,
+        isAuthenticated: !!token,
+    }), [data?.viewer, initialized, isLoading, token, login, logout]);
 
     return (
-        <AuthContext.Provider
-            value={{
-                user: data?.viewer || null,
-                loading: isLoading && !!token, // Loading only if we have a token and are fetching
-                login,
-                logout,
-                isAuthenticated: !!token,
-            }}
-        >
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

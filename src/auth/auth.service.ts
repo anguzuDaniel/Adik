@@ -117,9 +117,9 @@ export class AuthService {
         expiresAt: data.session?.expires_at || 0
       };
 
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        throw new ConflictException('Database constraint violated');
+    } catch (error: any) {
+      if (error instanceof QueryFailedError || error?.code === '23505') {
+        throw new ConflictException('Username already exists');
       }
       throw error;
     }
@@ -133,10 +133,10 @@ export class AuthService {
 
     if (error || !data || !data.user) {
       console.error('Authentication failed due to error:', error);
-      throw new UnauthorizedException('Invalid Credentials');
+      // Pass through Supabase's specific error message for the frontend
+      const message = error?.message || 'Invalid credentials';
+      throw new UnauthorizedException(message);
     }
-
-    console.log('Authenticated User:', data.user); // Debugging
 
     return data.user;
   }
@@ -184,11 +184,10 @@ export class AuthService {
     });
 
     if (error) {
-      console.log('Error logging in with Supabase:', error);
-      throw new UnauthorizedException('Invalid email or password');
+      console.error('Error logging in with Supabase:', error);
+      // Pass through Supabase's specific error message (e.g. "Email not confirmed")
+      throw new UnauthorizedException(error.message);
     }
-
-    console.log('Logged in', data);
 
     const { data: session, error: sessionError } =
       await this.supabase.auth.getSession();

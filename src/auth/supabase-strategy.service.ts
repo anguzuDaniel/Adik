@@ -20,7 +20,7 @@ export class SupabaseStrategy extends PassportStrategy(
   ) {
     super({
       supabaseUrl: process.env.SUPABASE_URL as string,
-      supabaseKey: process.env.SUPABASE_JWT_SECRET as string,
+      supabaseKey: (process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY) as string,
       extractor: ExtractJwt.fromAuthHeaderAsBearerToken(),
       supabaseOptions: {
         auth: {
@@ -62,20 +62,27 @@ export class SupabaseStrategy extends PassportStrategy(
     }
 
     try {
+      console.log('[Auth] Validating token...');
       const { data: { user }, error } = await supabase.auth.getUser(token);
 
       if (error || !user) {
+        console.error('[Auth] Token validation failed:', error?.message || 'No user returned');
         return this.fail({ message: 'Invalid token' }, 401);
       }
 
-      const localUser = await this.usersService.findBySupabaseId(user.id);
+      console.log('[Auth] Token valid for user:', user.id, user.email);
 
-      if (!localUser) {
-        return this.fail({ message: 'User not registered' }, 401);
-      }
+      // Auto-create local user record if it doesn't exist yet
+      const localUser = await this.usersService.findOrCreateFromSupabase({
+        id: user.id,
+        email: user.email!,
+        metadata: user.user_metadata,
+      });
 
-      this.success(localUser, 200);
-    } catch (error) {
+      console.log('[Auth] Local user found/created:', localUser?.id, localUser?.email);
+      this.success(localUser, {});
+    } catch (error: any) {
+      console.error('[Auth] Unexpected error in authenticate:', error?.message, error);
       this.error(error);
     }
   }

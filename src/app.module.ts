@@ -23,7 +23,7 @@ const __dirname = dirname(__filename);
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: ['.env.local', '.env'],
       load: [dbConfig],
       isGlobal: true,
     }),
