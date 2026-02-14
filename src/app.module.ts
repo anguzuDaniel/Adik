@@ -32,12 +32,17 @@ const __dirname = dirname(__filename);
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('SUPABASE_DATABASE_URL'),
+        host: configService.get<string>('SUPABASE_DATABASE_HOST'),
+        port: configService.get<number>('SUPABASE_DATABASE_PORT'),
         password: configService.get<string>('SUPABASE_DATABASE_PASSWORD'),
         username: configService.get<string>('SUPABASE_DATABASE_USERNAME'),
+        database: 'postgres',
         entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
         autoLoadEntities: true,
         synchronize: true, // Warning: Set to false in production
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
